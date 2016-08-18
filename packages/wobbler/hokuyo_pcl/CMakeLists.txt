@@ -103,13 +103,52 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(hokuyo_pcl/hokuyo_pcl.cpp);
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Commented out because wasn't building
+#add_executable(hokuyo_pcl/hokuyo_pcl.cpp);
+
+
+
+
+
+
+
+
+
+
+
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(minimal_nodes_node minimal_nodes_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(hokuyo_pcl  ${catkin_LIBRARIES} )
+
+
+
+
+
+
+#commented out because wasn't building
+#target_link_libraries(hokuyo_pcl  ${catkin_LIBRARIES} )
+
+
+
+
+
+
+
 
 #############
 ## Install ##
