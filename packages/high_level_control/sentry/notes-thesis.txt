@@ -117,6 +117,22 @@ rostopic pub /cmd_mode std_msgs/Int32 1 //on babs
 
 roslaunch sentry_urdf start_rviz.launch //on computer
 
+
+
+
+
+
+
+
+TODO remove unused convert_twist package on babs so catkin_make works?
+
+
+
+
+
+
+
+
 TDLR:
 plug in robot
 flip circuit breaker
