@@ -1,0 +1,191 @@
+
+
+roslaunch gazebo_ros empty_world.launch
+roslaunch mobot_urdf mobot.launch
+
+roslaunch sentry_urdf empty_world.launch
+roslaunch sentry_urdf sentry.launch
+
+roslaunch mobot_urdf open_loop_squarewave_commander.launch
+
+rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.5, y: 0.0, z: ←  0.0}, angular: {x: 0.0,y: 0.0,z: 0.3}}'
+
+roslaunch sentry_urdf display.launch model:='$(find sentry_urdf)/urdf/sentry.urdf'
+
+rosrun xacro xacro sentry.xacro > sentry.urdf
+
+
+
+
+
+
+SENTRY ROBOT
+
+#roslaunch sentry_urdf ground_plane_with_sentry.launch
+#rosrun mobot_pub_des_state mobot_pub_des_state_startup
+#roscd ps8
+#rosrun map_server map_server starting_pen_map.yaml 
+#rosrun amcl amcl
+#rosrun odom_tf odom_tf
+#rosrun ps8 lin_steering
+#rosrun ps8 amcl_path_client
+
+
+FOR SIMULATION
+roslaunch sentry_urdf ground_plane_with_sentry.launch
+#rosrun robot_state_publisher robot_state_publisher
+#rosrun amcl_control pub_des_state_startup
+#rosrun odom_tf odom_tf
+#rosrun amcl_control lin_steering
+#rosrun gmapping slam_gmapping scan:=/scan
+#rosrun amcl_control amcl_path_client
+
+rostopic pub /cmd_mode std_msgs/Int32 1
+
+rosrun tangent_bug tangent_bug_main
+
+FOR REAL ROBOT
+roslaunch sentry_urdf start_physical_robot.launch
+#rosrun robot_state_publisher robot_state_publisher
+#rosrun amcl_control pub_des_state_startup
+#rosrun odom_tf odom_tf
+#rosrun amcl_control lin_steering
+#rosrun gmapping slam_gmapping scan:=/scan
+#rosrun amcl_control amcl_path_client
+
+DIFF: 
+
+params changed:
+steering_algorithm.h
+pub_des_state.h
+traj_builder.h
+
+
+
+
+
+
+
+Startup:
+
+plug in robot
+flip circuit breaker
+turn on computer
+hit rem estop to turn on motor controller (check lights)
+
+plug ethernet into router and antenna power supply
+plug antenna ethernet into antenna power suppy
+
+{
+plug ethernet into router and computer
+//OR
+from mac connect to router dd-wrt
+in advanced wifi settings, in TCP/IP, change ip to 192.168.1.102
+(use dhcp with manual address)
+}
+
+{
+./login_babs.sh //only on rick's computer
+//OR
+export ROS_MASTER_URI=http://192.168.1.100:11311
+// OR put this in bashrc:
+alias babs_master='export ROS_MASTER_URI=http://192.168.1.100:11311'
+}
+
+export ROS_IP=(inet addr) #or whatever ifconfig says your ip is
+
+//convenience:
+export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; ssh babs@192.168.1.100
+
+ssh babs@192.168.1.100 //ping 192.168.1.100 if necessary
+
+{
+./just_do_it.sh //on babs, enter password 1lmiagmc!...
+//restart twice or until rostopic echo odom shows changes
+}
+
+rqt_console //on computer
+
+roslaunch sentry_urdf legacy.launch //on babs
+
+{
+//to change control mode
+./auto_mode.sh //on babs
+//OR
+rostopic pub /cmd_mode std_msgs/Int32 1 //on babs
+}
+
+roslaunch sentry_urdf start_rviz.launch //on computer
+
+TDLR:
+plug in robot
+flip circuit breaker
+turn on computer
+hit rem estop to turn on motor controller (check lights)
+plug ethernet into router and antenna power supply
+plug antenna ethernet into antenna power suppy
+plug ethernet into router and computer
+export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; ssh babs@192.168.1.100
+./just_do_it.sh //on babs, enter password 1lmiagmc!  //repeat until rostopic echo odom shows changes
+rqt_console //on computer
+roslaunch sentry_urdf legacy.launch //on babs
+./auto_mode.sh //on babs to change control mode
+
+//go home
+./go_home.sh
+
+//joystick
+./joy_mode.sh
+
+//un-ssh
+logout
+
+//for teleop
+rosrun sentry_teleop sentry_joy
+
+#for meessages published via rosinfo
+rqt_console
+
+rosrun tf tf_echo odom map
+rosrun tf view_frames
+
+#to save
+rosrun map_server map_saver -f newMap
+
+#luc said for filter things?
+rqt_logger_level
+
+//vim
+vim filename
+esc-i //to edit 
+esc:wq //to exit
+
+
+
+
+global fixed frame for visualization of lidar: base_laser1_link
+Add "LaserScan" change topic to "scan" 
+
+rosrun babs_slam babslam_main
+rosbag play north_loop.bag
+rosrun rviz rviz
+
+
+
+
+
+
+
+
+
+
+
+
+catkin_create_pkg babs_nav move_base robot_state_publisher gazebo_ros
+cs_create_pkg babs_nav move_base robot_state_publisher gazebo_ros
+
+#added to bashrc (by luc's script)
+alias cs_create_pkg='~/ros_ws/src/cwru/learning_ros_external_packages/cs_create_pkg.py'
+
+rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.3}}'
+
