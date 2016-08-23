@@ -26,10 +26,8 @@
 -->
 
 <node pkg="tf" type="static_transform_publisher" name="lidar_link_broadcaster" args="0.5 0 0.4 0 0 0 base_link lidar_link 100" />
-
-
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
+<node name="odom_tf" pkg="odom_tf" type="odom_tf"/>
 
 <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen" args="scan:=/sensor_msgs/LaserScan _base_frame:=lidar_link">
 
