@@ -104,6 +104,7 @@ ssh babs@192.168.1.100 //ping 192.168.1.100 if necessary
 //restart twice or until rostopic echo odom shows changes
 }
 
+export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; // on computer to share rosmaster
 rqt_console //on computer
 
 roslaunch sentry_urdf legacy.launch //on babs
@@ -118,48 +119,7 @@ rostopic pub /cmd_mode std_msgs/Int32 1 //on babs
 roslaunch sentry_urdf start_rviz.launch //on computer
 
 
-
-
-
-
-
-
-
-<launch>
-        <include file="$(find roboteq_driver)/launch/start_motors.launch" />
-        <include file="$(find launchers)/launch/start_lidar.launch" />
-        <include file="$(find novatel)/launch/novatel_for_psr.launch" />
-        <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" />
-</launch>
-
-
-//justdoit ->
-~/get_permisions.sh
-//roslaunch launchers full_launch.launch ->
-//<include file="$(find roboteq_driver)/launch/start_motors.launch" /> ->
-<arg name="port" default="/dev/ttyACM0" />
-<node name = "converter" pkg = "convert_twist" type = "convert_twist"/>
-<node name = "odom" pkg = "convert_twist" type = "odom"/>
   
-  
-<node pkg="roboteq_driver" type="driver_node" name="roboteq_driver" output="screen">
-  <param name="port" value="$(arg port)" />
-  <param name="value" value="115200" />
-  <param name="channels" value = "2"/>
-</node>
-
-
-
-
-<include file="$(find launchers)/launch/start_lidar.launch" />
-<include file="$(find novatel)/launch/novatel_for_psr.launch" />
-<include file="$(find razor_imu_9dof)/launch/razor-pub.launch" />
-
-
-
-
-
-
 TDLR:
 plug in robot
 flip circuit breaker
@@ -170,12 +130,14 @@ plug antenna ethernet into antenna power suppy
 plug ethernet into router and computer
 export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; ssh babs@192.168.1.100
 ./just_do_it.sh //on babs, enter password 1lmiagmc!  //repeat until rostopic echo odom shows changes
+export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; // on computer to share rosmaster
 rqt_console //on computer
-roslaunch sentry_urdf legacy.launch //on babs
+roslaunch sentry_urdf start_rviz.launch //on computer
+
+
+
+
 ./auto_mode.sh //on babs to change control mode
-
-
-
 
 //go home
 ./go_home.sh
@@ -233,5 +195,5 @@ cs_create_pkg babs_nav move_base robot_state_publisher gazebo_ros
 #added to bashrc (by luc's script)
 alias cs_create_pkg='~/ros_ws/src/cwru/learning_ros_external_packages/cs_create_pkg.py'
 
-rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.3}}'
+rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'
 
