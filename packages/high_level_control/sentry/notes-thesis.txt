@@ -1,66 +1,6 @@
 
 
-roslaunch gazebo_ros empty_world.launch
-roslaunch mobot_urdf mobot.launch
-
-roslaunch sentry_urdf empty_world.launch
-roslaunch sentry_urdf sentry.launch
-
-roslaunch mobot_urdf open_loop_squarewave_commander.launch
-
-rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.5, y: 0.0, z: ←  0.0}, angular: {x: 0.0,y: 0.0,z: 0.3}}'
-
-roslaunch sentry_urdf display.launch model:='$(find sentry_urdf)/urdf/sentry.urdf'
-
-rosrun xacro xacro sentry.xacro > sentry.urdf
-
-
-
-
-
-
-SENTRY ROBOT
-
-#roslaunch sentry_urdf ground_plane_with_sentry.launch
-#rosrun mobot_pub_des_state mobot_pub_des_state_startup
-#roscd ps8
-#rosrun map_server map_server starting_pen_map.yaml 
-#rosrun amcl amcl
-#rosrun odom_tf odom_tf
-#rosrun ps8 lin_steering
-#rosrun ps8 amcl_path_client
-
-
-FOR SIMULATION
-roslaunch sentry_urdf ground_plane_with_sentry.launch
-#rosrun robot_state_publisher robot_state_publisher
-#rosrun amcl_control pub_des_state_startup
-#rosrun odom_tf odom_tf
-#rosrun amcl_control lin_steering
-#rosrun gmapping slam_gmapping scan:=/scan
-#rosrun amcl_control amcl_path_client
-
 rostopic pub /cmd_mode std_msgs/Int32 1
-
-rosrun tangent_bug tangent_bug_main
-
-FOR REAL ROBOT
-roslaunch sentry_urdf start_physical_robot.launch
-#rosrun robot_state_publisher robot_state_publisher
-#rosrun amcl_control pub_des_state_startup
-#rosrun odom_tf odom_tf
-#rosrun amcl_control lin_steering
-#rosrun gmapping slam_gmapping scan:=/scan
-#rosrun amcl_control amcl_path_client
-
-DIFF: 
-
-params changed:
-steering_algorithm.h
-pub_des_state.h
-traj_builder.h
-
-
 
 
 
@@ -233,5 +173,5 @@ cs_create_pkg babs_nav move_base robot_state_publisher gazebo_ros
 #added to bashrc (by luc's script)
 alias cs_create_pkg='~/ros_ws/src/cwru/learning_ros_external_packages/cs_create_pkg.py'
 
-rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.3}}'
+rostopic pub cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'
 
