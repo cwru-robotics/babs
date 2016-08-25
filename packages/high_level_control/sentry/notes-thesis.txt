@@ -70,10 +70,11 @@ plug antenna ethernet into antenna power suppy
 plug ethernet into router and computer
 export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; ssh babs@192.168.1.100
 ./just_do_it.sh //on babs, enter password 1lmiagmc!  //repeat until rostopic echo odom shows changes
-export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; // on computer to share rosmaster
+export ROS_IP=192.168.1.132; export ROS_MASTER_URI=http://192.168.1.100:11311; //on any terminals on computer
 rqt_console //on computer
+roslaunch babs_nav be_free.launch //on babs
 roslaunch sentry_urdf start_rviz.launch //on computer
-
+rosrun navigation_goals //on babs
 
 
 

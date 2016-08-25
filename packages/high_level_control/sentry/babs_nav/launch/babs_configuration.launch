@@ -25,8 +25,14 @@
 <node pkg="rviz" type="rviz" name="rviz" args="-d $(find sentry_urdf)/rviz_config/sentry.rviz"/>
 -->
 
+<!--
 <node pkg="tf" type="static_transform_publisher" name="lidar_link_broadcaster" args="0.5 0 0.4 0 0 0 base_link lidar_link 100" />
+-->
+<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.5 0 0.4 0 0 0 base_link base_laser1_link 100" />
+
+
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+<node name="pub_des_state_startup" pkg="mapping_and_control" type="pub_des_state_startup" />
 <node name="odom_tf" pkg="odom_tf" type="odom_tf"/>
 
 <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen" args="scan:=/sensor_msgs/LaserScan _base_frame:=lidar_link">
