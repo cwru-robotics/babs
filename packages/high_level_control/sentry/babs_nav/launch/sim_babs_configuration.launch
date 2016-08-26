@@ -1,0 +1,58 @@
+<launch>
+
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+      <arg name="world_name" value="$(find exmpl_models)/testing_ground/testing_ground.world"/>
+  </include>
+
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find sentry_urdf)/urdf/sentry_standalone.urdf.xacro'" />
+
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model"
+      args="-param robot_description
+            -urdf
+            -z 0.7
+            -model robot_description"
+      respawn="false" output="screen" />
+
+
+<!--END OF GAZEBO STUFF-->
+
+<node pkg="rviz" type="rviz" name="rviz" args="-d $(find sentry_urdf)/rviz_config/sentry.rviz"/>
+
+<!--
+<node pkg="tf" type="static_transform_publisher" name="lidar_link_broadcaster" args="0.5 0 0.4 0 0 0 base_link lidar_link 100" />
+-->
+<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.5 0 0.4 0 0 0 base_link base_laser1_link 100" />
+
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+<!--
+<node name="pub_des_state_startup" pkg="mapping_and_control" type="pub_des_state_startup" />
+<node name="odom_tf" pkg="odom_tf" type="odom_tf"/>
+-->
+
+<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen" args="scan:=/sensor_msgs/LaserScan _base_frame:=lidar_link">
+
+
+        <param name="xmin" value="-10.0"/>
+        <param name="ymin" value="-30.0"/>
+        <param name="xmax" value="50.0"/>
+        <param name="ymax" value="30.0"/>
+        <param name="delta" value="0.025"/> 
+        <param name="map_update_interval" value="2.0"/> 
+        <param name="linearUpdate" value="0.3"/>
+        <param name="minimumScore" value="1000"/>
+
+
+        <!--
+        <param name="maxUrange" value="59.0"/>
+        <param name="maxRange" value="63.0"/>
+        <param name="angularUpdate" value="0.15"/>
+
+        
+        <param name="particles" value="50"/>
+        -->
+
+</node>
+</launch>

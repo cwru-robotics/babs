@@ -1,0 +1,6 @@
+<launch>
+
+  <include file="$(find babs_nav)/launch/sim_babs_configuration.launch" />
+  <include file="$(find babs_nav)/launch/move_base.launch" />
+
+</launch>
