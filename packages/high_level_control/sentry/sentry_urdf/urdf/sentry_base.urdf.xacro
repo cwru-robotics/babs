@@ -15,11 +15,11 @@
 
   <!-- define the base-link origin to lie at floor level, between the drive wheels-->
    <!--main body is a simple box; origin is a center of box-->
-  <xacro:property name="bodylen" value="1.22" />
+  <xacro:property name="bodylen" value="1.068" />
   <xacro:property name="bodywidth" value="0.368" />
   <xacro:property name="bodyheight" value="1.346" />
   <xacro:property name="default_mass" value="1.0" />
-  <xacro:property name="lidar_cube_size" value="0.25" />
+  <xacro:property name="lidar_cube_size" value="0.152" />
   <xacro:property name="lidar_dist_up_body" value="0.2" />
   
   <!-- "track" is the distance between the wheels -->
