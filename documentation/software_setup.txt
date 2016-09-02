@@ -1,0 +1,18 @@
+Go here and follow the instructions to install ros and setup the workspace:
+https://github.com/cwru-robotics/cwru_scripts/tree/master/mobile_robotics
+
+Remove lines in setup_workspace_376.sh about cloning git repositories for cwru robotics classes and learning ros.
+
+Follow steps at url for serial package installation:
+http://wjwwood.io/serial/
+
+delete everything in the ros_ws/src folder and clone the babs repo into there and build
+
+run:
+sudo apt-get install ros-indigo-dwa-local-planner
+
+goto bab/packages/high_level_control, open cloneTheseHere.txt and clone them into the high_level_control folder
+
+
+
+pray that it builds

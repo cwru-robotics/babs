@@ -30,9 +30,7 @@ cs_add_library(sentry_pub_des_state_lib src/pub_des_state.cpp)
 # Executables: uncomment the following and edit arguments to compile new nodes
 # may add more of these lines for more nodes from the same package
 
-cs_add_executable(lidar src/lidar.cpp)
 cs_add_executable(path_client src/steering_main.cpp)
-cs_add_executable(lin_steering src/lin_steering_wrt_odom.cpp)
 cs_add_executable(pub_des_state_startup src/pub_des_state_startup_main.cpp)
 
 #the following is required, if desire to link a node in this package with a library created in this same package
