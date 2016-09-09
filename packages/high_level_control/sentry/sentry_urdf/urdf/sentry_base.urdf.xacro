@@ -20,7 +20,7 @@
   <xacro:property name="bodyheight" value="1.346" />
   <xacro:property name="default_mass" value="1.0" />
   <xacro:property name="lidar_cube_size" value="0.152" />
-  <xacro:property name="lidar_dist_up_body" value="0.2" />
+  <xacro:property name="lidar_dist_from_ground" value="0.32" />
   
   <!-- "track" is the distance between the wheels -->
   <xacro:property name="track" value=".52" />
@@ -122,7 +122,7 @@
 
     <joint name="lidar_joint" type="fixed">
         <axis xyz="0 1 0" />
-        <origin xyz="${bodylen/2 + lidar_cube_size/2} 0 ${lidar_dist_up_body - bodylen/2}" rpy="0 0 0"/>
+        <origin xyz="${bodylen/2 + lidar_cube_size/2} 0 ${lidar_dist_from_ground + lidar_cube_size/2 - bodyheight/2 - wheel_radius}" rpy="0 0 0"/>
         <parent link="base_link"/>
         <child link="lidar_link"/>
     </joint>

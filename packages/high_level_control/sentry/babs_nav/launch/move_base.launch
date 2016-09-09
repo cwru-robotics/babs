@@ -23,7 +23,7 @@
     <rosparam file="$(find babs_nav)/config/dwa_local_planner_params.yaml" command="load" />
 
     <remap from = "map" to ="/map"/>
-    <param name= "controller_frequency" value="10" type="double"/> <!-- 20? -->
+    <param name= "controller_frequency" value="20" type="double"/> <!-- 20? -->
 
   </node>
 </launch>

@@ -13,6 +13,6 @@ sudo apt-get install ros-indigo-dwa-local-planner
 
 goto bab/packages/high_level_control, open cloneTheseHere.txt and clone them into the high_level_control folder
 
+pray to the ros gods for it to build
 
-
-pray that it builds
+roscd and catkin_make

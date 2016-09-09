@@ -4,4 +4,7 @@ git clone https://github.com/tu-darmstadt-ros-pkg/hector_tracked_vehicles_common
 
 git clone https://github.com/ros-perception/openslam_gmapping
 
-git clone https://github.com/ros-perception/slam_gmapping
+//jk not this one anymore
+//git clone https://github.com/ros-perception/slam_gmapping
+
+git clone https://github.com/tu-darmstadt-ros-pkg/hector_slam
