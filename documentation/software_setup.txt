@@ -1,7 +1,6 @@
 Go here and follow the instructions to install ros and setup the workspace:
-https://github.com/cwru-robotics/cwru_scripts/tree/master/mobile_robotics
-
-Remove lines in setup_workspace_376.sh about cloning git repositories for cwru robotics classes and learning ros.
+https://github.com/cwru-robotics/cwru_wiki/wiki/Mobile-Robotics:-Workstation-Setup-Scripts
+(optional) Remove lines in setup_workspace_376.sh about cloning git repositories for cwru robotics classes and learning ros.
 
 Follow steps at url for serial package installation:
 http://wjwwood.io/serial/
