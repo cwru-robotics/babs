@@ -19,7 +19,6 @@
 
 <node pkg="rviz" type="rviz" name="rviz" args="-d $(find sentry_urdf)/rviz_config/sentry.rviz"/>
 
-<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.61 0 0.396 0 0 0 base_link base_laser1_link 100" />
 
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
@@ -27,6 +26,13 @@
 
 
 
+<node pkg="tf" type="static_transform_publisher" name="kinect_broadcaster" args="0 0 0 -0.500 0.500 -0.500 0.500 kinect_link kinect_depth_frame 100" />
+
+<!-- what exactly does this do? (from https://github.com/wsnewman/learning_ros/blob/master/Part_2/mobot_urdf/launch/mobot_w_lidar_and_kinect.launch)
+<node pkg="image_view" type="image_view" name="image_view">
+   <remap from="image" to="/kinect/rgb/image_raw" />
+ </node>
+-->
 
 
 </launch>

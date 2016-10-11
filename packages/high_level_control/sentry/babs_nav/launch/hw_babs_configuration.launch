@@ -2,7 +2,7 @@
 
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find sentry_urdf)/urdf/sentry_standalone.urdf.xacro'" />
 
-<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.5 0 0.4 0 0 0 base_link base_laser1_link 100" />
+<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.61 0 0.396 0 0 0 base_link base_laser1_link 100" />
 
 <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 <node name="pub_des_state_startup" pkg="mapping_and_control" type="pub_des_state_startup" />
