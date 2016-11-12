@@ -1,15 +1,28 @@
 <launch>
   <master auto="start"/>
 
-  <!-- Run the map server
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_map_package)/my_map.pgm my_map_resolution"/>
-  -->
 
-  <!--- Run AMCL
-  <include file="$(find amcl)/examples/amcl_omni.launch" />
-  -->
+
+<!--
+  <rosparam file="$(find babs_nav)/config/starting_pen_map.yaml" command="load" ns="/costmap_node/costmap"/>
+
+<node name="map_server" pkg="map_server" type="map_server" args="$(find babs_nav)/config/starting_pen_map.yaml">
+  <remap from = "map" to ="/map2"/>
+</node>
+-->
+
+
+
+
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+
+    <!--
+    <param name="footprint_padding" value="0.01" />
+    <param name="controller_frequency" value="10.0" />
+    <param name="controller_patience" value="100.0" />
+    -->
+    <param name="planner_frequency" value="2.0" />
 
     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
   
@@ -19,10 +32,12 @@
     <rosparam file="$(find babs_nav)/config/global_costmap_params.yaml" command="load" />
 
 <!--    <rosparam file="$(find babs_nav)/config/base_local_planner_params.yaml" command="load" />   -->
-
     <rosparam file="$(find babs_nav)/config/dwa_local_planner_params.yaml" command="load" />
 
+
     <remap from = "map" to ="/map"/>
+    
+
     <param name= "controller_frequency" value="10" type="double"/> <!-- 20? -->
 
   </node>

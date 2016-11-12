@@ -20,3 +20,27 @@ local_costmap:
   width: 10.0
   height: 10.0
   resolution: 0.025
+
+  #map_topic: /map
+
+# TODO it should work with empty plugins first
+  # plugins: #[]
+  #  - 
+  #    name: static_map2
+  #    type: "costmap_2d::StaticLayer"
+
+     
+   # - 
+   #   name: static_map
+   #   type: "costmap_2d::StaticLayer"
+   # #   map_topic: map
+   # 
+   # - 
+   #   name: inflation_layer
+   #   type: "costmap_2d::InflationLayer"
+   # - 
+   #   name: obstacle_layer
+   #   type: "costmap_2d::ObstacleLayer" 
+   # -
+   #   name: simple_layer
+   #   type: "simple_layer_namespace::SimpleLayer"
