@@ -17,7 +17,7 @@
    <!--main body is a simple box; origin is a center of box-->
   <xacro:property name="bodylen" value="1.068" />
   <xacro:property name="bodywidth" value="0.368" />
-  <xacro:property name="bodyheight" value="1.346" />
+  <xacro:property name="bodyheight" value="0.914" />
   <xacro:property name="default_mass" value="1.0" />
   <xacro:property name="lidar_cube_size" value="0.152" />
   <xacro:property name="lidar_dist_from_ground" value="0.32" />
@@ -202,7 +202,7 @@
         <visualize>true</visualize>             
         <camera>
             <!-- original: <horizontal_fov>1.047</horizontal_fov> -->  
-            <horizontal_fov>2.36</horizontal_fov>  
+            <horizontal_fov>1.571</horizontal_fov>  
             <image>
                 <width>640</width>
                 <height>480</height>
@@ -212,8 +212,8 @@
 
             </depth_camera>
             <clip>
-                <near>0.1</near>
-                <far>100</far>
+                <near>0.02</near>
+                <far>300</far>
             </clip>
         </camera>
       <!--here is the plug-in that does the work of kinect emulation-->
@@ -250,12 +250,12 @@
     <xacro:tracked_wheel parent="base_link" prefix="left_4" offset_x= "${-wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
 
     <!-- additional left wheels -->
-    <!-- <xacro:tracked_wheel parent="base_link" prefix="left_5" offset_x= "${-3*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
+    <xacro:tracked_wheel parent="base_link" prefix="left_5" offset_x= "${-3*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="left_6" offset_x= "${3*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="left_7" offset_x= "${-4*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="left_8" offset_x= "${4*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="left_9" offset_x= "${-5*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
-    <xacro:tracked_wheel parent="base_link" prefix="left_10" offset_x= "${5*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/> -->
+    <xacro:tracked_wheel parent="base_link" prefix="left_10" offset_x= "${5*wheel_spacing}" offset_y = "${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/> 
 
 
 
@@ -268,12 +268,12 @@
     <xacro:tracked_wheel parent="base_link" prefix="right_4" offset_x= "${wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     
     <!-- additional right wheels -->
-    <!-- <xacro:tracked_wheel parent="base_link" prefix="right_5" offset_x= "${-3*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
+     <xacro:tracked_wheel parent="base_link" prefix="right_5" offset_x= "${-3*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="right_6" offset_x= "${3*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="right_7" offset_x= "${-4*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="right_8" offset_x= "${4*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
     <xacro:tracked_wheel parent="base_link" prefix="right_9" offset_x= "${-5*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/>
-    <xacro:tracked_wheel parent="base_link" prefix="right_10" offset_x= "${5*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/> -->
+    <xacro:tracked_wheel parent="base_link" prefix="right_10" offset_x= "${5*wheel_spacing}" offset_y = "-${wheel_offset_y}" offset_z = "${wheel_offset_z_from_base_link}"/> 
 
 
 

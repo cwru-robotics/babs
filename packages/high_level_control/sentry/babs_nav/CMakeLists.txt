@@ -46,7 +46,6 @@ cs_add_library(simple_layer src/simple_layer.cpp)
 cs_add_executable(navigation_goals src/navigation_goals.cpp)
 
 
-
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
 # target_link_library(example my_lib)
