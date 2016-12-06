@@ -14,17 +14,42 @@
 // basic file operations
 #include <fstream>
 
+#include <gazebo_msgs/ModelState.h>
+#include <gazebo_msgs/SetModelState.h>
+#include <string.h>
+#include <stdio.h>  
+#include <std_msgs/Float64.h>
+
+#include <sstream>
+#include <boost/filesystem.hpp>
+#include <vector>
+
+
+
 using namespace std;
 
-bool published;
+bool shouldCapture;
+bool shouldSpawn;
+bool outputPositive;
+int fileCounter;
+
+
 
 ros::Publisher cropped_cloud_pub;
 
+struct Quaternion {
+	double w;
+	double x;
+	double y;
+	double z;
+};
+
 //save as RAW
 void saveImage(int **imageMatrix, int xdim, int ydim, char valuesFile[], char imageFile[]) {
-	//	
-	//	char valuesFile[] = "vals.txt";
-	//	char imageFile[] = "img.data"; 
+
+	boost::filesystem::create_directories("./NEGATIVE_OUTPUT");
+	boost::filesystem::create_directories("./POSITIVE_OUTPUT");
+
 
 	ofstream heightfile(valuesFile, ios::out | ios::binary);
 	FILE *image = fopen(imageFile, "wb");
@@ -138,8 +163,6 @@ void take_snapshot(const sensor_msgs::PointCloud2& input) {
 
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	pcl::fromROSMsg(input,cloud);
-	ROS_INFO("width: %d", cloud.width);
-	ROS_INFO("height: %d", cloud.height);
 
 	int cloudsize = (cloud.width) * (cloud.height);
 
@@ -270,19 +293,53 @@ void take_snapshot(const sensor_msgs::PointCloud2& input) {
 		}
 	}
 
-	char valuesFile[] = "values.txt";
-	char imageFile[] = "heightmap.data";
+	ostringstream ss;
+	ss << fileCounter;
+	string str = ss.str();
+	char suffix[str.length()];
+	strcpy (suffix,str.c_str());	
+
+	char valuesFile[strlen(suffix) + strlen("./********_OUTPUT/values.txt")];
+	char imageFile[strlen(suffix) + strlen("./********_OUTPUT/heightmap.data")];
+	if(outputPositive) {
+		strcpy (valuesFile,"./POSITIVE_OUTPUT/values");	
+		strcpy (imageFile,"./POSITIVE_OUTPUT/heightmap");	
+	}
+	else {
+		strcpy (valuesFile,"./NEGATIVE_OUTPUT/values");
+		strcpy (imageFile,"./NEGATIVE_OUTPUT/heightmap");	
+	}
+
+	strncat(valuesFile, suffix, strlen(suffix));
+	strncat(valuesFile, ".txt", strlen(".txt"));
+	strncat(imageFile, suffix, strlen(suffix));
+	strncat(imageFile, ".data", strlen(".data"));
 
 	//write to disk
 	saveImage(imageMatrix, xdim, ydim, valuesFile, imageFile);
+	fileCounter++;
+
+
+
+
+
+
+
+	//TODO decide if ya wanna use interpolation
+
+
+
+
+
+
 
 	//allow a max of 3 passes of interpolation, filling in small holes in the data, but not guessing at
 	//large, unknown areas
-	interpolateMissingData(imageMatrix, xdim, ydim, 3);
 
-	char valuesInterpolatedFile[] = "valuesInterpolated.txt";
-	char heightmapInterpolatedFile[] = "heightmapInterpolated.data";
-	saveImage(imageMatrix, xdim, ydim, valuesInterpolatedFile, heightmapInterpolatedFile);
+	// interpolateMissingData(imageMatrix, xdim, ydim, 3);
+	// char valuesInterpolatedFile[] = "valuesInterpolated.txt";
+	// char heightmapInterpolatedFile[] = "heightmapInterpolated.data";
+	// saveImage(imageMatrix, xdim, ydim, valuesInterpolatedFile, heightmapInterpolatedFile);
 
 	sensor_msgs::PointCloud2 croppedCloud;
 	pcl::toROSMsg(cloud, croppedCloud);
@@ -292,7 +349,6 @@ void take_snapshot(const sensor_msgs::PointCloud2& input) {
 	}
 	else {
 		cropped_cloud_pub.publish(croppedCloud);
-		ROS_INFO("Publisher VALID!!!!");
 	}
 }
 
@@ -300,19 +356,56 @@ void take_snapshot(const sensor_msgs::PointCloud2& input) {
 void pointCloudCallback(const sensor_msgs::PointCloud2& cloud) {
 
 	//only take_one_snapshot each time the node is run
-	if (!published) {
+	if (shouldCapture) {
 		take_snapshot(cloud);
-		published = true;
+		shouldCapture = false;
+		shouldSpawn = true;
 	}
+}
+
+//helper math function
+void toEulerianAngle(const Quaternion& q, double& pitch, double& roll, double& yaw)
+{
+	double ysqr = q.y * q.y;
+	double t0 = -2.0f * (ysqr + q.z * q.z) + 1.0f;
+	double t1 = +2.0f * (q.x * q.y - q.w * q.z);
+	double t2 = -2.0f * (q.x * q.z + q.w * q.y);
+	double t3 = +2.0f * (q.y * q.z - q.w * q.x);
+	double t4 = -2.0f * (q.x * q.x + ysqr) + 1.0f;
+
+	t2 = t2 > 1.0f ? 1.0f : t2;
+	t2 = t2 < -1.0f ? -1.0f : t2;
+
+	pitch = std::asin(t2);
+	roll = std::atan2(t3, t4);
+	yaw = std::atan2(t1, t0);
+}
+
+//helper math function
+Quaternion toQuaternion(double pitch, double roll, double yaw)
+{
+	Quaternion q;
+	double t0 = std::cos(yaw * 0.5f);
+	double t1 = std::sin(yaw * 0.5f);
+	double t2 = std::cos(roll * 0.5f);
+	double t3 = std::sin(roll * 0.5f);
+	double t4 = std::cos(pitch * 0.5f);
+	double t5 = std::sin(pitch * 0.5f);
+
+	q.w = t0 * t2 * t4 + t1 * t3 * t5;
+	q.x = t0 * t3 * t4 - t1 * t2 * t5;
+	q.y = t0 * t2 * t5 + t1 * t3 * t4;
+	q.z = t1 * t2 * t4 - t0 * t3 * t5;
+	return q;
 }
 
 int main(int argc, char** argv){
 
 	ros::init(argc, argv, "data_collection");
-
-	published = false;
-
+	shouldCapture = false;
+	shouldSpawn = true;
 	ROS_INFO("running data collection loop!");
+	fileCounter = 0;
 
 	//TODO future work: spawn in random spot
 	//check accerometer, speed, collisions to see if in a valid pose (aka upright, not colliding)
@@ -321,11 +414,208 @@ int main(int argc, char** argv){
 	//determine whether successful, saved pt cloud success label together as a pair
 
 	ros::NodeHandle n;
-
 	cropped_cloud_pub = n.advertise<sensor_msgs::PointCloud2>("/cropped_cloud", 1);
-
 	ros::Subscriber pcl_subscriber = n.subscribe("/kinect/depth/points", 1, pointCloudCallback);
 
-	ros::spin();
+	ros::Duration half_sec(0.5);
+	bool service_ready = false;
+	while (!service_ready) {
+		service_ready = ros::service::exists("/gazebo/set_model_state",true);
+		ROS_INFO("waiting for set_model_state service");
+		half_sec.sleep();
+	}
+	ROS_INFO("set_model_state service exists");
+	ros::ServiceClient set_model_state_client = 
+			n.serviceClient<gazebo_msgs::SetModelState>("/gazebo/set_model_state");
+
+	vector<string> objects;
+	//indexes 0-2 are a no go
+	objects.push_back("cinder_block_2");
+	objects.push_back("cardboard_box");
+	objects.push_back("cinder_block");
+
+	//indexes 3-6 are coo
+	objects.push_back("monkey wrench");
+	objects.push_back("t_brace_part");
+	objects.push_back("cross_joint_part");
+	//index 6 shouldn't be rotated
+	objects.push_back("grey_wall_0");
+
+	while(true) {
+		ros::spinOnce();
+
+		if (shouldSpawn) {
+			shouldSpawn = false;
+
+			int item_index = (int)(8 * ((double) rand() / (RAND_MAX)));
+			ROS_INFO("item_index is %d", item_index);
+			bool no_rot = false;
+
+			if(item_index <=2) {
+				outputPositive = false;
+			}
+			else {
+				outputPositive = true;
+				if(item_index >= 6) {
+					no_rot = true;
+				}
+			}
+
+			if (item_index == 7) {
+				//use ground plane instead of object so don't need to change location
+			}
+			else {
+				string item = objects.at(item_index);
+
+				char out[item.length()];
+				strcpy (out,item.c_str());	
+				ROS_INFO("item is %s", out);
+
+				gazebo_msgs::SetModelState model_state_srv_msg;
+				model_state_srv_msg.request.model_state.model_name = item;			
+
+				//convert quat to roll pitch yaw and back
+				//			Quaternion q;
+				//			q.x = model_state_srv_msg.request.model_state.pose.orientation.x;
+				//			q.y = model_state_srv_msg.request.model_state.pose.orientation.y;
+				//			q.z = model_state_srv_msg.request.model_state.pose.orientation.z;
+				//			q.w = model_state_srv_msg.request.model_state.pose.orientation.w;
+				//			double pitch, roll, yaw;
+				//			toEulerianAngle( q, &pitch, &roll, &yaw);
+
+				double pitch, roll, yaw;
+
+
+				if(no_rot) {
+					pitch = 0;
+					roll = -1.37;
+					yaw = -1.57;
+				}
+				else {
+					pitch = 0;
+					roll = 0;
+					yaw = ((double) rand() / (RAND_MAX))*2*3.14159;
+				}
+				Quaternion q = toQuaternion(pitch,roll,yaw);
+
+				model_state_srv_msg.request.model_state.pose.orientation.x = q.x;
+				model_state_srv_msg.request.model_state.pose.orientation.y = q.y;
+				model_state_srv_msg.request.model_state.pose.orientation.z = q.z;
+				model_state_srv_msg.request.model_state.pose.orientation.w = q.w;
+
+				double xDisplacement;
+				double yDisplacement;
+				xDisplacement = ((double) rand() / (RAND_MAX)) - 0.5;
+				if (no_rot) {
+					model_state_srv_msg.request.model_state.pose.position.x = 0.9 + xDisplacement;
+					model_state_srv_msg.request.model_state.pose.position.y = 0.0;
+					model_state_srv_msg.request.model_state.pose.position.z = -0.1;
+				}
+				else {
+					yDisplacement = ((double) rand() / (RAND_MAX)) - 0.5;
+					model_state_srv_msg.request.model_state.pose.position.x = 1.5 + 0.75*xDisplacement;
+					model_state_srv_msg.request.model_state.pose.position.y = 0.0 + yDisplacement;
+					model_state_srv_msg.request.model_state.pose.position.z = 0.5;
+				}
+
+				model_state_srv_msg.request.model_state.twist.linear.x= 0.0; //2cm/sec
+				model_state_srv_msg.request.model_state.twist.linear.y= 0.0;
+				model_state_srv_msg.request.model_state.twist.linear.z= 0.0;
+				model_state_srv_msg.request.model_state.twist.angular.x= 0.0;
+				model_state_srv_msg.request.model_state.twist.angular.y= 0.0;
+				model_state_srv_msg.request.model_state.twist.angular.z= 0.0;
+
+				model_state_srv_msg.request.model_state.reference_frame = "world";
+
+				set_model_state_client.call(model_state_srv_msg);
+				bool result = model_state_srv_msg.response.success;
+				if (!result)
+					ROS_WARN("service call to set_model_state failed!");
+			}
+
+			//now wait for the object to drop/settle and take a pic
+			half_sec.sleep();
+			shouldCapture = true;
+			//wait until capture function to be done
+			while(shouldCapture == true) {
+				ros::spinOnce();
+				half_sec.sleep();
+			}
+			//now remove the item if there was one
+			if (item_index == 7) {
+				//ground plane don't need to move anything
+			}
+			else {
+				string item = objects.at(item_index);
+				gazebo_msgs::SetModelState model_state_srv_msg;
+				model_state_srv_msg.request.model_state.model_name = item;			
+
+				model_state_srv_msg.request.model_state.pose.position.x = 0.0;
+				model_state_srv_msg.request.model_state.pose.position.y = 3.0;
+				model_state_srv_msg.request.model_state.pose.position.z = 2.0;
+
+				double pitch, roll, yaw;
+				pitch = 0;
+				roll = 0;
+				yaw = 0;
+				Quaternion q = toQuaternion(pitch,roll,yaw);
+				model_state_srv_msg.request.model_state.pose.orientation.x = q.x;
+				model_state_srv_msg.request.model_state.pose.orientation.y = q.y;
+				model_state_srv_msg.request.model_state.pose.orientation.z = q.z;
+				model_state_srv_msg.request.model_state.pose.orientation.w = q.w;
+
+				model_state_srv_msg.request.model_state.reference_frame = "world";
+
+				set_model_state_client.call(model_state_srv_msg);
+				bool result = model_state_srv_msg.response.success;
+				if (!result)
+					ROS_WARN("service call to set_model_state failed2!");
+			}
+
+		}
+	}
+	//	ros::spin();
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
