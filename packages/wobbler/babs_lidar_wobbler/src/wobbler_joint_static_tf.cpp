@@ -24,21 +24,21 @@ void poseCallback(const std_msgs::Int16& msg){
 	if(!node_ptr->getParam("dist_to_joint_x", dist_to_joint_x))
 	{
 		// "Good guess" values if we can't find a stored param.
-		dist_to_joint_x = -0.14;
+		dist_to_joint_x = -0.175;
 	}
 
 	double dist_to_joint_y;
 	if(!node_ptr->getParam("dist_to_joint_y", dist_to_joint_y))
 	{
 		// "Good guess" values if we can't find a stored param.
-		dist_to_joint_y = 0.0;
+		dist_to_joint_y = 0.15;
 	}
 
 	double dist_to_joint_z;
 	if(!node_ptr->getParam("dist_to_joint_z", dist_to_joint_z))
 	{
 		// "Good guess" values if we can't find a stored param.
-		dist_to_joint_z = 0.634925;
+		dist_to_joint_z = 0.6;
 	}
 
 	double rot_to_joint_r;

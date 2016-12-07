@@ -38,16 +38,16 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
         wobbler_angle = message_holder.data;
 
         // Get the most updated value of the wobbler's min/max wobbling angle. The angle can change in the middle of operation.
-        if(!nh_ptr->getParam("min_ang", min_ang))
+        if(!nh_ptr->getParam("min_angle", min_ang))
         {
             ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
-            min_ang = 900;
+            min_ang = 500;
         }
 
-        if(!nh_ptr->getParam("max_ang", max_ang))
+        if(!nh_ptr->getParam("max_angle", max_ang))
         {
             ROS_WARN("Wobbler point cloud could not find wobbler maximum angle (max_ang) on param server. Using arbitrary value.");
-            max_ang = 1100;
+            max_ang = 1000;
         }
 
 

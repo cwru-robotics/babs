@@ -8,9 +8,9 @@
 	<!-- Static transform between lidar_link frame and joint frame   -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "wobbler_joint_static_tf" /> 
 	<!-- Params for node.   -->
-	<param name="dist_to_joint_x" value="-0.14" />
-	<param name="dist_to_joint_y" value="0.0" />
-	<param name="dist_to_joint_z" value="0.634925" />
+	<param name="dist_to_joint_x" value="-0.175" />
+	<param name="dist_to_joint_y" value="0.15" />
+	<param name="dist_to_joint_z" value="0.6" />
 	<param name="rot_to_joint_r" value="0.0" />
 	<param name="rot_to_joint_p" value="0.0" />
 	<param name="rot_to_joint_y" value="3.14159265359" />
@@ -24,9 +24,9 @@
 	<!-- Publishes a wobbling motion for the dynamixel motor driver node.   -->
 	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" /> 
 	<!-- Params for node.   -->
-	<param name="min_ang" value="300" />
-	<param name="max_ang" value="800" />
-	<param name="change_ang" value="3" />
+	<param name="min_angle" value="300" />
+	<param name="max_angle" value="800" />
+	<param name="wobble_speed" value="3" />
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the hokuyo LaserScans, using Dynamixel motor information. -->
 	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "lidar_transformer2" />

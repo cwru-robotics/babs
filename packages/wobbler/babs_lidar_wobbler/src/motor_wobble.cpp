@@ -28,8 +28,10 @@ int main(int argc, char **argv) {
 
     bool increasing = true;
     int loop_counter = 0;
+    // The lowest and highest angles to go to
     double min_ang;
     double max_ang;
+    // How much to icnrease the angle command by each iteration. This controls the wobblers angular speed (rad/s) as a proxy variable (numbers/iteration)
     double change_ang;
 
     
@@ -40,21 +42,21 @@ int main(int argc, char **argv) {
         if (loop_counter % 10 == 0)
         {
 
-            if(!node.getParam("min_ang", min_ang))
+            if(!node.getParam("min_angle", min_ang))
             {
-                min_ang = 300;
+                min_ang = 500;
             }
 
 
-            if(!node.getParam("max_ang", max_ang))
+            if(!node.getParam("max_angle", max_ang))
             {
                 max_ang = 1000;  
             }
 
 
-            if(!node.getParam("change_ang", change_ang))
+            if(!node.getParam("wobble_speed", change_ang))
             {
-                change_ang = 1;
+                change_ang = 2;
             }
         }
         loop_counter++;
