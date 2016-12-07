@@ -1,3 +1,0 @@
-<launch> 
-<node name= "hokuyo_pcl" pkg= "hokuyo_pcl" type= "hokuyo_pcl" /> 
-</launch> 

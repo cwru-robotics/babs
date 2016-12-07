@@ -1,0 +1,8 @@
+<launch> 
+	<node pkg= "rviz"  type= "rviz" name= "rviz" args="-f world -d ~/ros_ws/src/10d-pc-wobbler.rviz"/> 
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node" args="_port:=/dev/ttyACM1" /> 
+	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_node" args="-baud 34 -tty 3" /> 
+	<node pkg= "tf_pub"  type= "tf_pub" name= "tf_pub" /> 
+	<node pkg= "tf_pub"  type= "tf_pub2" name= "tf_pub2" /> 
+	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" /> 
+</launch>
