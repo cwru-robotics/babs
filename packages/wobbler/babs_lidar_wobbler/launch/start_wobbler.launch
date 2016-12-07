@@ -6,7 +6,7 @@
 	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_node" args="-baud 34 -tty 3" /> 
 
 	<!-- Static transform between lidar_link frame and joint frame   -->
-	<node pkg= "babs_lidar_wobbler"  type= "tf_pub" name= "tf_pub" /> 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "wobbler_joint_static_tf" /> 
 	<!-- Params for node.   -->
 	<param name="dist_to_joint_x" value="-0.14" />
 	<param name="dist_to_joint_y" value="0.0" />

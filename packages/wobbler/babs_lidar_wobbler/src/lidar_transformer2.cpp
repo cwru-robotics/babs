@@ -1,10 +1,11 @@
-//sample program to transform lidar data--for illustration only
-//better: use laser_pipeline, see http://wiki.ros.org/laser_pipeline
+// LIDAR Transformer node for babs_lidar_wobbler.
+// Pulled from a completed homework assignment for Modern Robotics Programming by Trent Ziemer, heavily based on a minimal node written by Dr. Wyatt Newman.
+
 #include <math.h>
 #include <stdlib.h>
 #include <string>
 #include <vector>
-#include <ros/ros.h> //ALWAYS need to include this
+#include <ros/ros.h>
 
 #include <std_msgs/Int16.h>
 
@@ -19,7 +20,7 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 using namespace std;
 
-//these are global pointers
+// These are global pointers
 ros::NodeHandle * nh_ptr;
 pcl::PointCloud<pcl::PointXYZ> cloud;
 ros::Publisher * pubCloud_ptr;
@@ -29,12 +30,13 @@ vector <Eigen::Vector3d> g_pt_vecs_wrt_lidar_frame; //will hold 3-D points in LI
 vector <Eigen::Vector3d> g_pt_vecs_wrt_world_frame; //will hold 3_D points in world frame
 ros::Publisher *pub_ptr;
 
-// These are global objects
+// These are global variables used as parameters for the wobblers angle
 double wobbler_angle;
 double scanning_upwards;
 double last_wobbler_angle;
 
-
+// This callback function is called whenever we receive a laser scan message
+//  It will publish the scan as a point cloud. This cloud is a 2D slice of the final point cloud that results from the wobbler sweeping and getting stitched together.
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     //if here, then a new LIDAR scan has been received
     // get the transform from LIDAR frame to world frame
@@ -95,19 +97,20 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
         // ROS_INFO("(x,y,z) = (%6.3f, %6.3f, %6.3f), and %i", vec[0],vec[1],vec[2], npts3d);
     }
 
-// TZ below
+    // TZ below
 
-PointCloud::Ptr msg (new PointCloud);
-msg->header.frame_id = "lidar_link";
+    // Create a point cloud in the lidar link frame
+    PointCloud::Ptr msg (new PointCloud);
+    msg->header.frame_id = "lidar_link";
 
+    // Add the xyz points to the point cloud, set parameters, then publish
     for (int i = 0; i < npts3d; i++) {
-msg->points.push_back (pcl::PointXYZ(g_pt_vecs_wrt_world_frame[i][0],g_pt_vecs_wrt_world_frame[i][1],g_pt_vecs_wrt_world_frame[i][2]));
+        msg->points.push_back (pcl::PointXYZ(g_pt_vecs_wrt_world_frame[i][0],g_pt_vecs_wrt_world_frame[i][1],g_pt_vecs_wrt_world_frame[i][2]));
     } 
-msg->header.stamp = ros::Time::now().toNSec()/1e3;
-msg->height = npts3d;
-msg->width = 1;
-// ROS_INFO("Size is: %lu", msg->points.size());
-pub_ptr->publish(msg);
+    msg->header.stamp = ros::Time::now().toNSec()/1e3;
+    msg->height = npts3d;
+    msg->width = 1;
+    pub_ptr->publish(msg);
 }
 
 // Program starting point.
@@ -120,6 +123,8 @@ int main(int argc, char** argv) {
     ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("wobbler_scan_cloud", 1);
 
     pub_ptr = &pub;
+
+    // WSN below
 
     g_listener_ptr = new tf::TransformListener;
     tf::StampedTransform stfLidar2World;
@@ -142,8 +147,6 @@ int main(int argc, char** argv) {
     ROS_INFO("transform received; ready to process lidar scans");
 
     ros::Subscriber lidar_subscriber = nh.subscribe("/scan", 1, scanCallback);
-
-    //ros::Subscriber hokuyo_subscriber = nh.subscribe("/dynamixel_motor1_ang", 1, hokuyoMotorCallback);
 
     ros::spin();
 

@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
-#include<std_msgs/Int16.h> 
+#include <std_msgs/Int16.h> 
 
 // Transform publisher between the "lidar_link" (the 2D scanning SICK LIDAR), 
 //    and the "wobbler_joint", which is the axis of rotation of the front wobbler.
@@ -11,7 +11,7 @@ double motorEncodedAngle;
 ros::NodeHandle * node_ptr;
 
 // Gives the best idea of the transform between the babs lidar link frame,
-//  and the location of the frame. Static transform.
+//  and the location of the frame. Static transform. Needs updated.
 void poseCallback(const std_msgs::Int16& msg){
 	static tf::TransformBroadcaster br;
 	tf::Transform transform;
@@ -70,7 +70,7 @@ void poseCallback(const std_msgs::Int16& msg){
 }
 
 int main(int argc, char** argv){
-	ros::init(argc, argv, "my_tf_b");
+	ros::init(argc, argv, "wobbler_joint_static_tf");
 
 	ros::NodeHandle node;
 	node_ptr = &node;
