@@ -31,7 +31,7 @@
 	<!-- Publishes point clouds transformed to the lidar_link frame from the hokuyo LaserScans, using Dynamixel motor information. -->
 	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "lidar_transformer2" />
 
-	<!-- COMMENT -->
+	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the wobbler, based on motor angle. -->
 	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "hokuyo_pcl_stitcher" />
 
 </launch>
