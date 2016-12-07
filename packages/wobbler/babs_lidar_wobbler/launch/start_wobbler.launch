@@ -16,7 +16,7 @@
 	<param name="rot_to_joint_y" value="3.14159265359" />
 
 	<!-- Transform dependent on joint angle between joint and the wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "tf_pub2" name= "tf_pub2" /> 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "wobbler_laser_tf" /> 
 	<!-- Dummy params for node.   -->
 	<param name="factor" value="1" />
 	<param name="factor2" value="0.5" />

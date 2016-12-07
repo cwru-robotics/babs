@@ -33,7 +33,7 @@ catkin_simple()
 # may add more of these lines for more nodes from the same package
 cs_add_executable(motor_wobble src/motor_wobble.cpp)
 cs_add_executable(wobbler_joint_static_tf src/wobbler_joint_static_tf.cpp)
-cs_add_executable(tf_pub2 src/tf_pub2.cpp)
+cs_add_executable(wobbler_laser_tf src/wobbler_laser_tf.cpp)
 cs_add_executable(hokuyo_pcl_stitcher src/hokuyo_pcl_stitcher.cpp)
 cs_add_executable(lidar_transformer2 src/lidar_transformer2.cpp)
 

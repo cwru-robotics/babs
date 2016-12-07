@@ -1,5 +1,6 @@
 // LIDAR Transformer node for babs_lidar_wobbler.
 // Pulled from a completed homework assignment for Modern Robotics Programming by Trent Ziemer, heavily based on a minimal node written by Dr. Wyatt Newman.
+// Original node name was lidar_transformer. This is ...2 because it's just a variant on that node from a different package.
 
 #include <math.h>
 #include <stdlib.h>

@@ -3,9 +3,9 @@
 #include<std_msgs/Int16.h> 
 
 // Transform publisher between the "wobbler_joint" frame (the location of the axis of rotation of the wobbler), 
-//    and the "wobbler_joint", which is the axis of rotation of the front wobbler.
+//    and "laser", which is the approximate location of the source of the wobbling LIDAR laser.
 
-// Shamelessly stolen from some tutorial
+// Shamelessly stolen from some tutorial - TZ
 
 double motorEncodedAngle;
 
@@ -26,14 +26,15 @@ void poseCallback(const std_msgs::Int16& msg){
 	// Distance between wobbler axis of rotation and laser source is about 0.0889m, constant.
 	transform.setOrigin( tf::Vector3(0.0, 0.0, 0.0889) ); 
 
+	// Magic numbers that you CAN change if needed, but should NOT change unless you empirically think it's needed.
     if(!node_ptr->getParam("factor", factor))
     {
-        ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
+        ROS_WARN("Using arbitrary value.");
         factor = 1;
     }
     if(!node_ptr->getParam("factor2", factor2))
     {
-        ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
+        ROS_WARN("Using arbitrary value.");
         factor2 = 0.5;
     }
 
