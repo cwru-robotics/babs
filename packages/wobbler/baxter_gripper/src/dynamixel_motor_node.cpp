@@ -90,11 +90,11 @@ int main(int argc, char **argv)
   char node_name[50];
   char in_topic_name[50];
   char out_topic_name[50];
-  sprintf(node_name,"dynamixel_motor%d",motor_id);
+  sprintf(node_name,"motor%d",motor_id);
   ROS_INFO("node name: %s",node_name);
-  sprintf(in_topic_name,"dynamixel_motor%d_cmd",motor_id);
+  sprintf(in_topic_name,"motor%d_cmd",motor_id);
   ROS_INFO("input command topic: %s",in_topic_name);
-  sprintf(out_topic_name,"dynamixel_motor%d_ang",motor_id);
+  sprintf(out_topic_name,"motor%d_ang",motor_id);
   ROS_INFO("output topic: %s",out_topic_name);
 
   ros::init(argc,argv,node_name); //name this node 
