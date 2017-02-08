@@ -8,7 +8,7 @@ Front mounted hokuyo lidar for wobbler is called /dev/sensor-front_wobbler_lidar
 And the device name is implemented here:
 /home/babs/ros_ws/src/babs/packages/wobbler/babs_lidar_wobbler/launch/start_wobbler.launch (same as motor)
 
-Front mounter dynamixel motor for wobbler is called /dev/sensor-front_wobbler_motor
+Device for both dynamixel motors (daisy chained) is called /dev/sensor-wobbler_motors
 And the device name is implemented here:
 /home/babs/ros_ws/src/babs/packages/wobbler/babs_lidar_wobbler/launch/start_wobbler.launch (same as lidar)
 NOTE: This motor gets two symlinks, the actual one used is /dev/ttyUSB999 because the Dynamixel driver requires this format.

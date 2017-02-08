@@ -1,9 +1,12 @@
 <launch> 
 	<!-- Start Hokuyo LIDAR data collection   -->
-	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node" args="_port:=/dev/ttyACM1" /> 
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "rear_hokuyo_node" args="_port:=/dev/sensor-front_wobbler_lidar" /> 
 
-	<!-- Open communication driver between ROS and the dynamixel motor for the wobbler.   -->
-	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_node" args="-baud 34 -tty 3" /> 
+	<!-- Start Hokuyo LIDAR data collection   -->
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "front_hokuyo_node" args="_port:=/dev/sensor-rear_wobbler_lidar" /> 
+
+	<!-- Open communication driver between ROS and the dynamixel motor for the wobbler. Uses 999 because we cant use the more graceful name of "/dev/sensor-wobbler_motors" -->
+	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_node" args="-baud 34 -tty 999" /> 
 
 	<!-- Static transform between lidar_link frame and joint frame   -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "wobbler_joint_static_tf" /> 
