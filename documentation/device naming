@@ -1,0 +1,52 @@
+USB DEVICE NAMES REFERENCE LIST
+----------------------------------------------
+----------------------------------------------
+
+Front mounted main SICK lidar is called /dev/sensor-sick_lidar
+
+Front mounted hokuyo lidar for wobbler is called /dev/sensor-front_wobbler_lidar 
+And the device name is implemented here:
+/home/babs/ros_ws/src/babs/packages/wobbler/babs_lidar_wobbler/launch/start_wobbler.launch (same as motor)
+
+Front mounter dynamixel motor for wobbler is called /dev/sensor-front_wobbler_motor
+And the device name is implemented here:
+/home/babs/ros_ws/src/babs/packages/wobbler/babs_lidar_wobbler/launch/start_wobbler.launch (same as lidar)
+NOTE: This motor gets two symlinks, the actual one used is /dev/ttyUSB999 because the Dynamixel driver requires this format.
+
+Roboteq Motor Controller unit is...
+
+GPS Receiver is called /dev/sensor-gps
+And the device name is implemented here:
+/home/babs/ros_ws/src/babs/packages/novatel/launch/novatel_for_psr.launch
+
+Inertial Measurement Unit (IMU) is called /dev/sensor-imu
+And the device name is implemented here:
+/home/babs/ros_ws/src/babs/packages/razor_imu_9dof/config/razor.yaml
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+SOURCE CODE FOR UDEV-BASED NAMING RULES IN "/etc/udev/rules.d/99-usb.rules" IS SHOWN BELOW:
+
+# Main SICK LIDAR (normal USB cable that used to be ttyUSB1) 
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="FTDGL7UE", SYMLINK+="sensor-sick_lidar"
+
+# Inertial Measurement Unit (integrated PCB with USB cable that used to be ttyUSB2)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A600APZO", SYMLINK+="sensor-imu"
+
+# Dynamixel Wobbler (large and chunk USB device that used to be ttyUSB3)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZS0", SYMLINK+="sensor-front_wobbler_motor", SYMLINK+="ttyUSB999"
+# NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict.
+
+# GPS Receiver (usb cable to serial converter that used to be ttyUSB0)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", SYMLINK+="sensor-gps"
+# NOTE: GPS receiver unit USB device has no associated serial number as most others do, but this should still be fine
+
+# Motor Controller
+#TO DO WHEN FIXED
+# NOTE: SHOULD BE CALLED sensor-roboteq_motors
+
+# Hokuyo Wobbler (2-prong black and red USB cables that used to be ttyACM1)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-front_wobbler_lidar"
+# NOTE: Front wobbler LIDAR USB device has no associated serial number as most others do, but this should still be fine
