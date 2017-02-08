@@ -18,10 +18,11 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", SYMLINK+="s
 #TO DO WHEN FIXED
 # NOTE: SHOULD BE CALLED sensor-roboteq_motors
 
-# Hokuyo Wobbling LIDAR in the Front (2-prong black and red USB cables that used to be ttyACM1)
-SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-front_wobbler_lidar"
-# NOTE: Front wobbler LIDAR USB device has no associated serial number as most others do, but this should still be fine
+# SUSPENDED FOLLOWING TWO: THEY CANT WORK RIGHT!
+# Hokuyo Wobbling LIDAR in the Front (2-prong black and red USB cables that was just recently added)
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-rear_wobbler_lidar"
+# NOTE: Our wobbler LIDAR USB devices have no associated serial number as most others do, but this should still be fine
 
-# Hokuyo Wobbling LIDAR in the Rear (2-prong black and red USB cables that was just recently added)
-SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-rear_wobbler_lidar"
-# NOTE: Rear wobbler LIDAR USB device has no associated serial number as most others do, but this should still be fine
+# Hokuyo Wobbling LIDAR in the Front (2-prong black and red USB cables that used to be ttyACM1)
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-front_wobbler_lidar"
+# NOTE: Our wobbler LIDAR USB devices have no associated serial number as most others do, but this should still be fine
