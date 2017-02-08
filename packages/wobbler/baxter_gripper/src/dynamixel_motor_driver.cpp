@@ -43,34 +43,7 @@ int main(int argc, char **argv)
   std::string dash_m = "-m";
   std::string dash_tty = "-tty";
   std::string dash_baud = "-baud";
-  
-  if (argc<2) {
-   ROS_INFO("using default motor_id %d, baud code %d, via /dev/ttyUSB%d",motor_id,baudnum,ttynum);
-   ROS_INFO("may run with command args, e.g.: -m 2 -tty 1 for motor_id=2 on /dev/ttyUSB1");
-  }
-  else {
-   std::vector <std::string> sources;
-    for (int i = 1; i < argc; ++i) { // argv[0] is the path to the program, we want from argv[1] onwards
-            sources.push_back(argv[i]); 
-    }
-    for (int i=0;i<argc-2;i++) {  // if have a -m or -tty, MUST have at least 2 args
-       std::cout<<sources[i]<<std::endl;
-       if (sources[i]==dash_m) {
-        std::cout<<"found dash_m"<<std::endl;
-        motor_id = atoi(sources[i+1].c_str()); 
-        }
-       if (sources[i]==dash_tty) {
-        std::cout<<"found dash_tty"<<std::endl;
-        ttynum = atoi(sources[i+1].c_str()); 
-        }
-       if (sources[i]==dash_baud) {
-        std::cout<<"found dash_baud"<<std::endl;
-        baudnum = atoi(sources[i+1].c_str()); 
-        }
-    }
-    ROS_INFO("using motor_id %d at baud code %d via /dev/ttyUSB%d",motor_id,baudnum,ttynum);
-  }
-        
+
   char node_name[50];
   char in_topic_name[50];
   char out_topic_name[50];
@@ -83,8 +56,52 @@ int main(int argc, char **argv)
 
   ros::init(argc,argv,node_name); //name this node 
 
-  ros::NodeHandle n; // need this to establish communications with our new node 
-  ros::Publisher pub_jnt = n.advertise<std_msgs::Int16>(out_topic_name, 1);
+  ros::NodeHandle node; // need this to establish communications with our new node 
+  ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>(out_topic_name, 1);
+  
+
+  bool use_cmd_line_args = false;
+  
+  if (use_cmd_line_args == true)
+  {
+    if (argc<2) {
+      ROS_INFO("using default motor_id %d, baud code %d, via /dev/ttyUSB%d",motor_id,baudnum,ttynum);
+      ROS_INFO("may run with command args, e.g.: -m 2 -tty 1 for motor_id=2 on /dev/ttyUSB1");
+    }
+    else {
+      std::vector <std::string> sources;
+      for (int i = 1; i < argc; ++i) { // argv[0] is the path to the program, we want from argv[1] onwards
+      sources.push_back(argv[i]); 
+      }
+      for (int i=0;i<argc-2;i++) {  // if have a -m or -tty, MUST have at least 2 args
+      std::cout<<sources[i]<<std::endl;
+      if (sources[i]==dash_m) {
+      std::cout<<"found dash_m"<<std::endl;
+      motor_id = atoi(sources[i+1].c_str()); 
+      }
+      if (sources[i]==dash_tty) {
+      std::cout<<"found dash_tty"<<std::endl;
+      ttynum = atoi(sources[i+1].c_str()); 
+      }
+      if (sources[i]==dash_baud) {
+      std::cout<<"found dash_baud"<<std::endl;
+      baudnum = atoi(sources[i+1].c_str()); 
+      }
+      }
+      ROS_INFO("using motor_id %d at baud code %d via /dev/ttyUSB%d",motor_id,baudnum,ttynum);
+    }
+  }
+  else
+  {
+    int front_motor_id;
+    int rear_motor_id;
+
+    if(!node.getParam("front_motor_id", front_motor_id) || !node.getParam("rear_motor_id", rear_motor_id))
+    {
+        front_motor_id = 1;
+        rear_motor_id = 2;
+    }
+  }
   
   double dt= 0.01; // 100Hz
 
@@ -98,7 +115,7 @@ int main(int argc, char **argv)
 
   ROS_INFO("attempting communication with motor_id %d at baudrate code %d",motor_id,baudnum);
 
-  ros::Subscriber subscriber = n.subscribe(in_topic_name,1,dynamixelCB); 
+  ros::Subscriber subscriber = node.subscribe(in_topic_name,1,dynamixelCB); 
   std_msgs::Int16 motor_ang_msg;
   short int sensed_motor_ang=0;
 

@@ -2,10 +2,8 @@
 	<!-- Start Hokuyo LIDAR data collection   -->
 	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node" args="_port:=/dev/sensor-front_wobbler_lidar" /> 
 
-	<!-- Open communication driver between ROS and the dynamixel motor for the front wobbler.   -->
-	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "front_dynamixel_motor_node" args="-baud 34 -tty 999 -m 0" output="screen" /> 
-	<!-- Open communication driver between ROS and the dynamixel motor for rear the wobbler.   -->
-	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "rear_dynamixel_motor_node" args="-baud 34 -tty 999 -m 1" output="screen" /> 
+	<!-- Open communication driver between ROS and the dynamixel motor for the front wobbler. -->
+	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" /> 
 	<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
 
 	<!-- Static transform between lidar_link frame and joint frame   -->
