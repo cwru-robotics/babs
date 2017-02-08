@@ -7,7 +7,7 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{seria
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A600APZO", SYMLINK+="sensor-imu"
 
 # Dynamixel Wobbler Motors (both front and back wobbler motors controlled through same) (large and chunk USB device that used to be ttyUSB3)
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZS0", SYMLINK+="sensor-front_wobbler_motor", SYMLINK+="ttyUSB999"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZS0", SYMLINK+="sensor-wobbler_motor", SYMLINK+="ttyUSB999"
 # NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict with standard USB devices.
 
 # GPS Receiver (usb cable to serial converter that used to be ttyUSB0)
