@@ -103,29 +103,41 @@ int main(int argc, char **argv)
     }
   }
   
-  double dt= 0.01; // 100Hz
+  // A good frequency at which to read motor position and publish that to the controller is 100 Hz
+  double dt= 0.01;
 
+  // Open appropriate USB port that has the dynamixel device in it
   ROS_INFO("attempting to open /dev/ttyUSB%d",ttynum);
   bool open_success = open_dxl(ttynum,baudnum);
 
+  // If we fail, warn user and exit
   if (!open_success) {
-    ROS_WARN("could not open /dev/ttyUSB%d; check permissions?",ttynum);
+    ROS_WARN("Could not open /dev/ttyUSB%d; check permissions?",ttynum);
     return 0;
   }
 
-  ROS_INFO("attempting communication with motor_id %d at baudrate code %d",motor_id,baudnum);
+  // Restate to user the motor communications parameters for each motor ID
+  ROS_INFO("Attempting communication with following:");
+  for (int i = 0; i < motor_ids.size(); i++)
+  {
+    ROS_INFO("-motor_id %d at baudrate code %d",motor_id,baudnum);
+    ros::Subscriber subscriber = node.subscribe(in_topic_name,1,dynamixelCB); 
+    std_msgs::Int16 motor_ang_msg;
+    short int sensed_motor_ang=0;
+  }
 
-  ros::Subscriber subscriber = node.subscribe(in_topic_name,1,dynamixelCB); 
-  std_msgs::Int16 motor_ang_msg;
-  short int sensed_motor_ang=0;
-
-  while(ros::ok()) {
-   sensed_motor_ang = read_position(motor_id);
-   if (sensed_motor_ang>4096) {
-      ROS_WARN("read error from Dynamixel: ang value %d at cmd %d",sensed_motor_ang-4096,g_goal_angle);
+  while(ros::ok()) 
+  {
+    for (int i = 0; i < motor_ids.size(); i++)
+    {
+      sensed_motor_ang = read_position(motor_id);
+      if (sensed_motor_ang>4096) 
+      {
+        ROS_WARN("read error from Dynamixel: ang value %d at cmd %d",sensed_motor_ang-4096,g_goal_angle);
+      }
+      motor_ang_msg.data = sensed_motor_ang;
+      pub_jnt.publish(motor_ang_msg);
     }
-    motor_ang_msg.data = sensed_motor_ang;
-   pub_jnt.publish(motor_ang_msg);
    ros::Duration(dt).sleep();
    ros::spinOnce();
    }
