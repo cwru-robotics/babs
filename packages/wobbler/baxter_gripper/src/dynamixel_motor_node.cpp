@@ -1,31 +1,17 @@
-//wsn, 11/15; compile low-level C-code for Dynamixel communication w/ C++ ROS node
-// this node subscribes to topic "dynamixel_motor2_cmd" for position commands in the range 0-4095
-// It also publishes motor angles on topic "dynamixel_motor2_ang"
-// for baxter gripper, want: motor_id=1; baudnum=1; ttynum=0;
-// these are the defaults;
-// alternatively, run w/: rosrun baxter_gripper dynamixel_motor_node -m 2 -tty 0 -baudnum 1
-// to specify motor 2; or accept tty and baudnum defaults w/:
-// rosrun baxter_gripper dynamixel_motor_node -m 2
-
-// this node's name and its topic names are mangled to match motor_id, e.g.
-//  dynamixel_motor2_cmd for motor 2, and dynamixel_motor2_ang for motor2 feedback topic
-//  NOTE: there are fairly frequent read errors from the motor;  
-//  read errors are published as ang+4096;  inspect the angle value, and if >4096, DO NOT BELIEVE IT
-
-// can test this node with "rosrun baxter_gripper dynamixel_sin_test", which will prompt for the motor_id,
-// then command slow sinusoides on the chosen motor topic
-
+// Trent Ziemer 2/8/17 for sentry wobbler
+// Based on basic given WSN Low-level C code for Dynamixel motor communication with ROS nodes
 
 #include<ros/ros.h> 
 #include<std_msgs/Int16.h> 
 #include <linux/serial.h>
 #include <termios.h>
 
-// Default settings: EDIT THESE FOR YOUR MOTOR
+// Default settings
 #define DEFAULT_BAUDNUM		1 // code "1" --> 1Mbps
 #define DEFAULT_ID		1 //this is the motor ID
 #define DEFAULT_TTY_NUM			0 // typically, 0 for /dev/ttyUSB0
 
+// Prevent C++ name mangling of Dynamixels C header and C source files that we want to use
 extern "C" { 
   int send_dynamixel_goal(short int motor_id, short int goalval); 
   int open_dxl(int deviceIndex, int baudnum);
@@ -40,6 +26,7 @@ extern "C" {
 
 //globals:
   short int motor_id = DEFAULT_ID;
+  std::vector<short int> motor_ids;
   short int baudnum = DEFAULT_BAUDNUM;
   int ttynum = DEFAULT_TTY_NUM;
   short int g_goal_angle=0;
@@ -50,7 +37,6 @@ void dynamixelCB(const std_msgs::Int16& goal_angle_msg)
   g_goal_angle = goal_angle; // for use by main()
      send_dynamixel_goal(motor_id,goal_angle);
 } 
-
 
 int main(int argc, char **argv) 
 { 
@@ -72,7 +58,6 @@ int main(int argc, char **argv)
        if (sources[i]==dash_m) {
         std::cout<<"found dash_m"<<std::endl;
         motor_id = atoi(sources[i+1].c_str()); 
- 
         }
        if (sources[i]==dash_tty) {
         std::cout<<"found dash_tty"<<std::endl;
@@ -86,7 +71,6 @@ int main(int argc, char **argv)
     ROS_INFO("using motor_id %d at baud code %d via /dev/ttyUSB%d",motor_id,baudnum,ttynum);
   }
         
-
   char node_name[50];
   char in_topic_name[50];
   char out_topic_name[50];
@@ -129,6 +113,6 @@ int main(int argc, char **argv)
    ros::spinOnce();
    }
   dxl_terminate();
-  ROS_INFO("goodbye");
-  return 0; // should never get here, unless roscore dies 
+  ROS_INFO("Goodbye!");
+  return 0; 
 } 
