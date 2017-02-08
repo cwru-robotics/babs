@@ -8,28 +8,14 @@ int main(int argc, char **argv) {
     ros::init(argc, argv, "dynamixel_wobbler_commander"); 
     ros::NodeHandle node; 
 
-    int front_motor_id;
-    int rear_motor_id;
+    // Each motor has it's own ID
+    int motor_id = 1;
 
-    // Each motor has it's own ID, quick pull from param server
-    if(!node.getParam("front_motor_id", front_motor_id) || !node.getParam("rear_motor_id", rear_motor_id))
-    {
-        front_motor_id = 1;
-        rear_motor_id = 2;
-    }
+    char cmd_topic_name[50];
+    sprintf(cmd_topic_name,"dynamixel_motor%d_cmd",motor_id);
+    ROS_INFO("Using command topic: %s",cmd_topic_name);
 
-
-    char front_cmd_topic_name[50];
-    char rear_cmd_topic_name[50];
-    sprintf(front_cmd_topic_name,"motor%d_cmd", front_motor_id);
-    ROS_INFO("Using front command topic: %s",front_cmd_topic_name);
-
-    sprintf(rear_cmd_topic_name,"motor%d_cmd", rear_motor_id);
-    ROS_INFO("And rear command topic: %s",rear_cmd_topic_name);
-
-    ros::Publisher front_motor_pub = node.advertise<std_msgs::Int16>(front_cmd_topic_name, 1);
-
-    ros::Publisher rear_motor_pub = node.advertise<std_msgs::Int16>(rear_cmd_topic_name, 1);
+    ros::Publisher dyn_pub = node.advertise<std_msgs::Int16>(cmd_topic_name, 1);
     
     std_msgs::Int16 int_angle; 
    double dt = 0.01; // repeat at freq 1/dt
@@ -61,10 +47,12 @@ int main(int argc, char **argv) {
                 min_ang = 500;
             }
 
+
             if(!node.getParam("max_angle", max_ang))
             {
                 max_ang = 1000;  
             }
+
 
             if(!node.getParam("wobble_speed", change_ang))
             {
@@ -73,34 +61,32 @@ int main(int argc, char **argv) {
         }
         loop_counter++;
 
-    min_ang = (short int)min_ang;
-    max_ang = (short int)max_ang;
-    change_ang = (short int)change_ang;
+min_ang = (short int)min_ang;
+max_ang = (short int)max_ang;
+change_ang = (short int)change_ang;
 
-    if(increasing == true)
-    {
-    	int_ang = int_ang + change_ang;
-    }
-    else
-    {
-        int_ang = int_ang - change_ang;
-    }
+if(increasing == true)
+{
+	int_ang = int_ang + change_ang;
+}
+else
+{
+    int_ang = int_ang - change_ang;
+}
 
-    if(int_ang >= max_ang)
-    {
-    	increasing = false;
-    }
-    if(int_ang <= min_ang)
-    {
-    	increasing = true;
-    }
+if(int_ang >= max_ang)
+{
+	increasing = false;
+}
+if(int_ang <= min_ang)
+{
+	increasing = true;
+}
 
-    int_angle.data = int_ang;
-    ROS_INFO("sending: %d",int_ang);
-    // Move both motors by the same angle, for convenienve and simplicity
-    front_motor_pub.publish(int_angle); 
-    rear_motor_pub.publish(int_angle);
-    naptime.sleep(); 
+        int_angle.data = int_ang;
+        ROS_INFO("sending: %d",int_ang);
+        dyn_pub.publish(int_angle); // publish the value--of type Float64-- 
+	naptime.sleep(); 
     }
 }
 

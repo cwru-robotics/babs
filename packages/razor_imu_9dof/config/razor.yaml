@@ -1,5 +1,5 @@
 ## USB port
-port: /dev/sensor-imu
+port: /dev/ttyUSB2
 
 
 ##### Calibration ####

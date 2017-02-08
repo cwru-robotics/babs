@@ -48,7 +48,7 @@ void dynamixelCB(const std_msgs::Int16& goal_angle_msg)
 { 
   short int goal_angle = goal_angle_msg.data;
   g_goal_angle = goal_angle; // for use by main()
-  send_dynamixel_goal(motor_id,goal_angle);
+     send_dynamixel_goal(motor_id,goal_angle);
 } 
 
 
@@ -92,9 +92,9 @@ int main(int argc, char **argv)
   char out_topic_name[50];
   sprintf(node_name,"dynamixel_motor%d",motor_id);
   ROS_INFO("node name: %s",node_name);
-  sprintf(in_topic_name,"motor%d_cmd",motor_id);
+  sprintf(in_topic_name,"dynamixel_motor%d_cmd",motor_id);
   ROS_INFO("input command topic: %s",in_topic_name);
-  sprintf(out_topic_name,"motor%d_ang",motor_id);
+  sprintf(out_topic_name,"dynamixel_motor%d_ang",motor_id);
   ROS_INFO("output topic: %s",out_topic_name);
 
   ros::init(argc,argv,node_name); //name this node 

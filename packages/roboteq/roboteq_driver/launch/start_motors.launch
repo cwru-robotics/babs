@@ -1,5 +1,5 @@
 <launch>
-  <arg name="port" default="/dev/sensor-roboteq_motors" />
+  <arg name="port" default="/dev/ttyACM0" />
   <node name = "converter" pkg = "convert_twist" type = "convert_twist"/>
   <node name = "odom" pkg = "convert_twist" type = "odom"/>
   
