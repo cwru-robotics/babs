@@ -31,6 +31,5 @@ usb_cams contains the ROS node for the 180 degree usb cameras.
 '''
 '''
 
-
 #wobbler
-wobbler creates a 3d map of the environment using lidar and stuff
+Contains wobbler drivers, processors, testers, and point cloud processing for Hokyu LIDAR + Dynamixel motor based 3D point cloud wobblers for 3d-informed navigation
