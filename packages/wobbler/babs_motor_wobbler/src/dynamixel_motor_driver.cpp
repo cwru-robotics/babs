@@ -116,14 +116,17 @@ int main(int argc, char **argv)
     return 0;
   }
 
+  // A vector of ROS standard message for the motor angle, one for each motor
+  std::vector<std_msgs::Int16> motor_ang_msg;
+  // A vector of integers for the motor angle, one for each motor
+  std::vector<short int> sensed_motor_ang = 0;
+
   // Restate to user the motor communications parameters for each motor ID
   ROS_INFO("Attempting communication with following:");
   for (int i = 0; i < motor_ids.size(); i++)
   {
     ROS_INFO("-motor_id %d at baudrate code %d",motor_id,baudnum);
     ros::Subscriber subscriber = node.subscribe(in_topic_name,1,dynamixelCB); 
-    std_msgs::Int16 motor_ang_msg;
-    short int sensed_motor_ang=0;
   }
 
   while(ros::ok()) 

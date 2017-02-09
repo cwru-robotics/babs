@@ -2,7 +2,7 @@
 <package>
   <name>babs_motor_wobbler</name>
   <version>0.0.0</version>
-  <description>The wobblers motors package</description>
+  <description>The wobblers motors package, based heavily on Dynamixels given motor driver libraries in C, an based on Dr. Wyatt Newmans baxter_gripper package, adopted for a different purpose</description>
   
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
