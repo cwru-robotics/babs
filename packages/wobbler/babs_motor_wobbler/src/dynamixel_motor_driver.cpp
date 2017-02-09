@@ -10,6 +10,7 @@
 #define DEFAULT_BAUDNUM		1 // code "1" --> 1Mbps
 #define DEFAULT_ID		1 //this is the motor ID
 #define DEFAULT_TTY_NUM			0 // typically, 0 for /dev/ttyUSB0
+#define DEFAULT_MOTOR_COUNT 2 // We expect the sentry to have exactly two motors, one each for front and rear wobbler
 
 // Prevent C++ name mangling of Dynamixels C header and C source files that we want to use
 extern "C" { 
@@ -58,10 +59,10 @@ int main(int argc, char **argv)
 
   ros::NodeHandle node; // need this to establish communications with our new node 
   ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>(out_topic_name, 1);
-  
 
   bool use_cmd_line_args = false;
-  
+   
+  // Traditional command line way? Or new parameter based way?
   if (use_cmd_line_args == true)
   {
     if (argc<2) {
@@ -93,13 +94,25 @@ int main(int argc, char **argv)
   }
   else
   {
-    int front_motor_id;
-    int rear_motor_id;
 
-    if(!node.getParam("front_motor_id", front_motor_id) || !node.getParam("rear_motor_id", rear_motor_id))
+    char motor_id_param[50];
+    std::vector<int> motor_ids;
+    int motor_id;
+
+    for (int i = 0; i < DEFAULT_MOTOR_COUNT; i++)
     {
-        front_motor_id = 1;
-        rear_motor_id = 2;
+      // Use a hacky trick I saw to name mangle the motor ID parameter names
+      sprintf(motor_id_param,"motor%d_id",i);
+      ROS_INFO("node name: %s",node_name);
+
+      if(!node.getParam(motor_id_param, motor_id))
+      {
+        ROS_WARN("Warning, could not find appropriate motor ID on motor %d", i);
+      }
+      else
+      {
+        motor_ids.push_back(motor_id);
+      }
     }
   }
   
@@ -110,19 +123,24 @@ int main(int argc, char **argv)
   ROS_INFO("attempting to open /dev/ttyUSB%d",ttynum);
   bool open_success = open_dxl(ttynum,baudnum);
 
-  // If we fail, warn user and exit
+  // If we fail to open the device file, warn user and exit
   if (!open_success) {
     ROS_WARN("Could not open /dev/ttyUSB%d; check permissions?",ttynum);
     return 0;
   }
 
   // A vector of ROS standard message for the motor angle, one for each motor
-  std::vector<std_msgs::Int16> motor_ang_msg;
+  std::vector<std_msgs::Int16> motor_angle_commands;
   // A vector of integers for the motor angle, one for each motor
-  std::vector<short int> sensed_motor_ang = 0;
+  std::vector<short int> sensed_motor_angles;
+
+  for (int i = 0; i < motor_ids.size(); i++)
+  {
+    sensed_motor_angles.push_back(0);
+  }
 
   // Restate to user the motor communications parameters for each motor ID
-  ROS_INFO("Attempting communication with following:");
+  ROS_INFO("Attempting communication with following motors:");
   for (int i = 0; i < motor_ids.size(); i++)
   {
     ROS_INFO("-motor_id %d at baudrate code %d",motor_id,baudnum);
@@ -133,13 +151,13 @@ int main(int argc, char **argv)
   {
     for (int i = 0; i < motor_ids.size(); i++)
     {
-      sensed_motor_ang = read_position(motor_id);
-      if (sensed_motor_ang>4096) 
+      sensed_motor_angles[i] = read_position(motor_ids[i]);
+      if (sensed_motor_angles[i]>4096) 
       {
-        ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",sensed_motor_ang-4096,g_goal_angle);
+        ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",sensed_motor_angles[i]-4096,g_goal_angle);
       }
-      motor_ang_msg.data = sensed_motor_ang;
-      pub_jnt.publish(motor_ang_msg);
+      motor_angle_commands[i].data = sensed_motor_angles[i];
+      pub_jnt.publish(motor_angle_commands[i]);
     }
    ros::Duration(dt).sleep();
    ros::spinOnce();
