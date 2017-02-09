@@ -6,9 +6,15 @@
 	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" /> 
 	<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
 
+	<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
+	<param name="motor0_id" value="0" />
+	<param name="motor1_id" value="1" />
+	<param name="motor_tty" value="999" />
+	<param name="motor_baud" value="34" />
+
 	<!-- Static transform between lidar_link frame and joint frame   -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "wobbler_joint_static_tf" /> 
-	<!-- Params for node.   -->
+	<!-- Parameters for the lidar frame transform   -->
 	<param name="dist_to_joint_x" value="-0.175" />
 	<param name="dist_to_joint_y" value="0.15" />
 	<param name="dist_to_joint_z" value="0.6" />

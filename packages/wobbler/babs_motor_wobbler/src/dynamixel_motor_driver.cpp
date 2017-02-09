@@ -60,6 +60,10 @@ int main(int argc, char **argv)
   ros::NodeHandle node; // need this to establish communications with our new node 
   ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>(out_topic_name, 1);
 
+  int motor_tty;
+  int motor_baud;
+
+  // Only change to true if you want to remove reliance on parameter server and use cmd line arguments instead
   bool use_cmd_line_args = false;
    
   // Traditional command line way? Or new parameter based way?
@@ -99,6 +103,7 @@ int main(int argc, char **argv)
     std::vector<int> motor_ids;
     int motor_id;
 
+
     for (int i = 0; i < DEFAULT_MOTOR_COUNT; i++)
     {
       // Use a hacky trick I saw to name mangle the motor ID parameter names
@@ -114,14 +119,27 @@ int main(int argc, char **argv)
         motor_ids.push_back(motor_id);
       }
     }
+
+    if(!node.getParam("motor_tty", motor_tty))
+    {
+      ROS_WARN("Warning, could not find dynamixel tty device number to connect to. Could cause motors to not function.");
+      motor_tty = 999;
+    }
+
+    if(!node.getParam("motor_baud", motor_baud))
+    {
+      ROS_WARN("Warning, could not find appropriate dynamixel motor baud rate to connect at. Could cause motors to not function.");
+      motor_baud = 34;
+    }
+
   }
   
   // A good frequency at which to read motor position and publish that to the controller is 100 Hz
-  double dt= 0.01;
+  double dt = 0.01;
 
   // Open appropriate USB port that has the dynamixel device in it
-  ROS_INFO("attempting to open /dev/ttyUSB%d",ttynum);
-  bool open_success = open_dxl(ttynum,baudnum);
+  ROS_INFO("attempting to open /dev/ttyUSB%d",motor_tty);
+  bool open_success = open_dxl(motor_tty,motor_baud);
 
   // If we fail to open the device file, warn user and exit
   if (!open_success) {
@@ -143,25 +161,33 @@ int main(int argc, char **argv)
   ROS_INFO("Attempting communication with following motors:");
   for (int i = 0; i < motor_ids.size(); i++)
   {
-    ROS_INFO("-motor_id %d at baudrate code %d",motor_id,baudnum);
-    ros::Subscriber subscriber = node.subscribe(in_topic_name,1,dynamixelCB); 
+    ROS_INFO("-motor_id %d at baudrate code %d",motor_id, motor_baud);
+    ros::Subscriber subscriber = node.subscribe(in_topic_name, 1, dynamixelCB); 
   }
 
+  // Main program loop to read motor positions from device and push them to ROS topics for each motor
   while(ros::ok()) 
   {
+    // For each of the motors that we have (should be two for this)
     for (int i = 0; i < motor_ids.size(); i++)
     {
+      // Use Dynamixel library to read the particular motors current position and store it in proper location of the vector
       sensed_motor_angles[i] = read_position(motor_ids[i]);
+
+      // Check if the received value is bad, holdover from older times...its marginally important to make a note of for debugging
       if (sensed_motor_angles[i]>4096) 
       {
         ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",sensed_motor_angles[i]-4096,g_goal_angle);
       }
+      // Prepare to publish the received data value
       motor_angle_commands[i].data = sensed_motor_angles[i];
       pub_jnt.publish(motor_angle_commands[i]);
     }
+    // Take a break, you've had a long day...
    ros::Duration(dt).sleep();
    ros::spinOnce();
    }
+   // Should never happen until ros cuts out entirely
   dxl_terminate();
   ROS_INFO("Goodbye!");
   return 0; 
