@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>baxter_gripper</name>
+  <name>babs_motor_wobbler</name>
   <version>0.0.0</version>
-  <description>The baxter_gripper package</description>
+  <description>The wobblers motors package</description>
   
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="wyatt@todo.todo">wyatt</maintainer>
+  <maintainer email="trent@todo.todo">trent</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->

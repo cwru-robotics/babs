@@ -133,7 +133,7 @@ int main(int argc, char **argv)
       sensed_motor_ang = read_position(motor_id);
       if (sensed_motor_ang>4096) 
       {
-        ROS_WARN("read error from Dynamixel: ang value %d at cmd %d",sensed_motor_ang-4096,g_goal_angle);
+        ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",sensed_motor_ang-4096,g_goal_angle);
       }
       motor_ang_msg.data = sensed_motor_ang;
       pub_jnt.publish(motor_ang_msg);
