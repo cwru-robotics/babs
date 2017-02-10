@@ -1,4 +1,5 @@
-# tank-chair
+# BABS, a movile Autonomous Robotic Sentry
+# (Stands for "Bayesian Autonomous Broadcasting Sentry")
 A repository for senior project work for the smart wheelchair and Air Force sentry.
 
 # Explanation of directories
