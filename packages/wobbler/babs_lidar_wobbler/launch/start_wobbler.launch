@@ -4,65 +4,67 @@
 	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "front_hokuyo_driver" args="_port:=/dev/ttyACM0" > 
 		<remap from="scan" to="front_wobbler/scan"/>
 	</node>
+
+	<!-- Rear hokuyo driver -->
 	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "rear_hokuyo_driver" args="_port:=/dev/ttyACM1" > 
 		<remap from="scan" to="rear_wobbler/scan"/>
 	</node>
 
 	<!-- Open communication driver between ROS and the dynamixel motors for the wobblers (one node for both/all dynamixel motors). -->
 	<node pkg= "babs_motor_wobbler" type= "dynamixel_motor_driver" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" > 
-	<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
+		<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
 
-	<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
-	<param name="front_motor_id" value="0" />
-	<param name="rear_motor_id" value="1" />
-	<param name="motor_tty" value="999" />
-	<param name="motor_baud" value="34" />
+		<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
+		<param name="motor1_id" value="0" />
+		<param name="motor2_id" value="1" />
+		<param name="motor_tty" value="999" />
+		<param name="motor_baud" value="34" />
 	</node>
 
 	<!-- Static transform between lidar_link frame and front joint frame  -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" >
-	<!-- Parameters for the lidar frame transform   -->
-	<param name="dist_to_joint_x" value="-0.175" />
-	<param name="dist_to_joint_y" value="0.15" />
-	<param name="dist_to_joint_z" value="0.6" />
-	<param name="rot_to_joint_r" value="0.0" />
-	<param name="rot_to_joint_p" value="0.0" />
-	<param name="rot_to_joint_y" value="3.14159265359" />
+		<!-- Parameters for the lidar frame transform   -->
+		<param name="dist_to_joint_x" value="-0.175" />
+		<param name="dist_to_joint_y" value="0.15" />
+		<param name="dist_to_joint_z" value="0.6" />
+		<param name="rot_to_joint_r" value="0.0" />
+		<param name="rot_to_joint_p" value="0.0" />
+		<param name="rot_to_joint_y" value="3.14159265359" />
 	</node>
 
 	<!-- Static transform between lidar_link frame and rear joint frame  -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" >
-	<!-- Parameters for the lidar frame transform   -->
-	<param name="dist_to_joint_x" value="-0.175" />
-	<param name="dist_to_joint_y" value="-0.3" />
-	<param name="dist_to_joint_z" value="0.6" />
-	<param name="rot_to_joint_r" value="0.0" />
-	<param name="rot_to_joint_p" value="0.0" />
-	<param name="rot_to_joint_y" value="3.14159265359" />
+		<!-- Parameters for the lidar frame transform   -->
+		<param name="dist_to_joint_x" value="-0.175" />
+		<param name="dist_to_joint_y" value="-0.3" />
+		<param name="dist_to_joint_z" value="0.6" />
+		<param name="rot_to_joint_r" value="0.0" />
+		<param name="rot_to_joint_p" value="0.0" />
+		<param name="rot_to_joint_y" value="3.14159265359" />
 	</node>
 
 	<!-- Transform dependent on joint angle between joint and the front wobbling LIDAR lasers source.   -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" > 
-	<!-- Dummy params for node.   -->
-	<param name="factor" value="1" />
-	<param name="factor2" value="0.5" />
+		<!-- Dummy params for node.   -->
+		<param name="factor" value="1" />
+		<param name="factor2" value="0.5" />
 	</node>
 
 	<!-- Transform dependent on joint angle between joint and the rear wobbling LIDAR lasers source.   -->
 	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" > 
-	<!-- Dummy params for node.   -->
-	<param name="factor" value="1" />
-	<param name="factor2" value="0.5" />
+		<!-- Dummy params for node.   -->
+		<param name="factor" value="1" />
+		<param name="factor2" value="0.5" />
 	</node>
 
 	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same commands to BOTH motors  -->
 	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="screen" > 
-	<!-- Params for node.   -->
-	<param name="min_angle" value="500" /> <!-- TRENT CHANGE TO 300 IMMEDIATELY -->
-	<param name="max_angle" value="800" />
-	<param name="wobble_speed" value="1" /> <!-- TRENT CHANGE TO 3 IMMEDIATELY -->
-	<param name="front_motor_id" value="1" />
-	<param name="rear_motor_id" value="2" />
+		<!-- Params for node.   -->
+		<param name="min_angle" value="500" /> <!-- TRENT CHANGE TO 300 IMMEDIATELY -->
+		<param name="max_angle" value="800" />
+		<param name="wobble_speed" value="1" /> <!-- TRENT CHANGE TO 3 IMMEDIATELY -->
+		<param name="front_motor_id" value="1" />
+		<param name="rear_motor_id" value="2" />
 	</node>
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the front hokuyo LaserScans, using motor position. -->

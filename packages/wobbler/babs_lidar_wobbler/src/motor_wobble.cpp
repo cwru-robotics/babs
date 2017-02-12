@@ -2,23 +2,14 @@
 #include <std_msgs/Int16.h>
 #include <math.h>
 
-// Shamelessly copied from a WSN class package's code (sine commander)
+// Shamelessly copied from a WSN class package's code (sine commander) and heavily modified
+// By TZ
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "dynamixel_wobbler_commander"); 
+    ros::init(argc, argv, "dynamixel_motor_wobble"); 
     ros::NodeHandle node; 
 
-    int front_motor_id;
-    int rear_motor_id;
-
-    // Each motor has it's own ID, quick pull from param server
-    if(!node.getParam("front_motor_id", front_motor_id) || !node.getParam("rear_motor_id", rear_motor_id))
-    {
-        front_motor_id = 1;
-        rear_motor_id = 2;
-    }
-
-
+/* Dude, FUCK name mangling
     char front_cmd_topic_name[50];
     char rear_cmd_topic_name[50];
     sprintf(front_cmd_topic_name,"motor%d_cmd", front_motor_id);
@@ -26,10 +17,11 @@ int main(int argc, char **argv) {
 
     sprintf(rear_cmd_topic_name,"motor%d_cmd", rear_motor_id);
     ROS_INFO("And rear command topic: %s",rear_cmd_topic_name);
+*/
 
-    ros::Publisher front_motor_pub = node.advertise<std_msgs::Int16>(front_cmd_topic_name, 1);
+    ros::Publisher front_motor_pub = node.advertise<std_msgs::Int16>("front_wobbler/cmd", 1);
 
-    ros::Publisher rear_motor_pub = node.advertise<std_msgs::Int16>(rear_cmd_topic_name, 1);
+    ros::Publisher rear_motor_pub = node.advertise<std_msgs::Int16>("rear_wobbler/cmd", 1);
     
     std_msgs::Int16 int_angle; 
    double dt = 0.01; // repeat at freq 1/dt

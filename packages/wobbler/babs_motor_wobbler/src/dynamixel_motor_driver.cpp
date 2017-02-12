@@ -45,6 +45,7 @@ int main(int argc, char **argv)
   std::string dash_tty = "-tty";
   std::string dash_baud = "-baud";
 
+/* DUDE FUCK NAME MANGLING
   char node_name[50];
   char in_topic_name[50];
   char out_topic_name[50];
@@ -55,10 +56,13 @@ int main(int argc, char **argv)
   sprintf(out_topic_name,"motor%d_ang",motor_id);
   ROS_INFO("output topic: %s",out_topic_name);
 
+*/
+  
   ros::init(argc,argv,node_name); //name this node 
 
   ros::NodeHandle node; // need this to establish communications with our new node 
-  ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>(out_topic_name, 1);
+  ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>("front_wobbler/angle", 1);
+  ros::Publisher pub_jnt2 = node.advertise<std_msgs::Int16>("rear_wobbler/angle", 1);
 
   int motor_tty;
   int motor_baud;
@@ -103,12 +107,10 @@ int main(int argc, char **argv)
     std::vector<int> motor_ids;
     int motor_id;
 
-
-    for (int i = 0; i < DEFAULT_MOTOR_COUNT; i++)
+    for (int i = 1; i <= DEFAULT_MOTOR_COUNT; i++)
     {
-      // Use a hacky trick I saw to name mangle the motor ID parameter names
-      sprintf(motor_id_param,"motor%d_id",i);
-      ROS_INFO("node name: %s",node_name);
+      // Use a hacky trick I've seen to name mangle the motor ID parameter names
+      sprintf(motor_id_param,"dynamixel_motor_driver/motor%d_id",i);
 
       if(!node.getParam(motor_id_param, motor_id))
       {
@@ -120,13 +122,13 @@ int main(int argc, char **argv)
       }
     }
 
-    if(!node.getParam("motor_tty", motor_tty))
+    if(!node.getParam("dynamixel_motor_driver/motor_tty", motor_tty))
     {
       ROS_WARN("Warning, could not find dynamixel tty device number to connect to. Could cause motors to not function.");
       motor_tty = 999;
     }
 
-    if(!node.getParam("motor_baud", motor_baud))
+    if(!node.getParam("dynamixel_motor_driver/motor_baud", motor_baud))
     {
       ROS_WARN("Warning, could not find appropriate dynamixel motor baud rate to connect at. Could cause motors to not function.");
       motor_baud = 34;
@@ -159,7 +161,7 @@ int main(int argc, char **argv)
 
   // Restate to user the motor communications parameters for each motor ID
   ROS_INFO("Attempting communication with following motors:");
-  for (int i = 0; i < motor_ids.size(); i++)
+  for (int i = 0; i <= motor_ids.size(); i++)
   {
     ROS_INFO("-motor_id %d at baudrate code %d",motor_id, motor_baud);
     ros::Subscriber subscriber = node.subscribe(in_topic_name, 1, dynamixelCB); 
@@ -181,13 +183,17 @@ int main(int argc, char **argv)
       }
       // Prepare to publish the received data value
       motor_angle_commands[i].data = sensed_motor_angles[i];
+
+      // SERIOUSLY FUCKED UP WILL NOT WORK. CHANGE ASAP.
       pub_jnt.publish(motor_angle_commands[i]);
+      pub_jnt2.publish(motor_angle_commands[i]);
     }
-    // Take a break, you've had a long day...
+
+  // Take a break, you've had a long day...
    ros::Duration(dt).sleep();
    ros::spinOnce();
    }
-   // Should never happen until ros cuts out entirely
+   // Should not happen until ROS cuts out entirely
   dxl_terminate();
   ROS_INFO("Goodbye!");
   return 0; 
