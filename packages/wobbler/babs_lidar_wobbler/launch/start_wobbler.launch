@@ -68,15 +68,23 @@
 	</node>
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the front hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "front_wobbler_transformer" />
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "front_wobbler_transformer" >
+		<param name="wobbler_namespace" value="front" />
+	</node>
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the rear  hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "rear_wobbler_transformer" />
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "rear_wobbler_transformer" >
+		<param name="wobbler_namespace" value="rear" />
+	</node>
 
 	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the front wobbler, based on motor angle. -->
-	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "front_hokuyo_pcl_stitcher" />
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "front_hokuyo_pcl_stitcher" >
+		<param name="wobbler_namespace" value="front" />
+	</node>
 
 	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the rear wobbler, based on motor angle. -->
-	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "rear_hokuyo_pcl_stitcher" />
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "rear_hokuyo_pcl_stitcher" >
+		<param name="wobbler_namespace" value="rear" />
+	</node>
 
 </launch>
