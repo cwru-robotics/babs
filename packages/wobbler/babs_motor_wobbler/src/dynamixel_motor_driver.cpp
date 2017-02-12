@@ -33,17 +33,19 @@ int ttynum = DEFAULT_TTY_NUM;
 short int g_goal_angle=0;
 
 short int g_front_motor_id;
-short ing g_rear_motor_id;
-  
+short int g_rear_motor_id;
+short int g_front_goal_angle=0;
+short int g_rear_goal_angle=0;
+
 void sendFrontMotorCmd(const std_msgs::Int16& goal_angle_msg) 
 { 
-  g_goal_angle = goal_angle_msg.data; // for use by main()
+  g_front_goal_angle = goal_angle_msg.data; // for use by main()
   send_dynamixel_goal(g_front_motor_id,goal_angle_msg.data); // When we receive a command message from the cmd topic, send that out on serial line using dynamixel code
 } 
 
 void sendRearMotorCmd(const std_msgs::Int16& goal_angle_msg) 
 { 
-  g_goal_angle = goal_angle_msg.data; // for use by main()
+  g_rear_goal_angle = goal_angle_msg.data; // for use by main()
   send_dynamixel_goal(g_rear_motor_id,goal_angle_msg.data); // When we receive a command message from the cmd topic, send that out on serial line using dynamixel code
 } 
 
@@ -63,7 +65,6 @@ int main(int argc, char **argv)
   ROS_INFO("input command topic: %s",in_topic_name);
   sprintf(out_topic_name,"motor%d_ang",motor_id);
   ROS_INFO("output topic: %s",out_topic_name);
-
 */
 
   ros::init(argc,argv,node_name); //name this node 
@@ -71,6 +72,9 @@ int main(int argc, char **argv)
   ros::NodeHandle node; // need this to establish communications with our new node 
   ros::Publisher pub_jnt = node.advertise<std_msgs::Int16>("front_wobbler/angle", 1);
   ros::Publisher pub_jnt2 = node.advertise<std_msgs::Int16>("rear_wobbler/angle", 1);
+  
+  ros::Subscriber subscriber = node.subscribe("front_wobbler/cmd", 1, sendFrontMotorCmd); 
+  ros::Subscriber subscriber2 = node.subscribe("rear_wobbler/cmd", 1, sendRearMotorCmd); 
 
   int motor_tty;
   int motor_baud;
@@ -110,24 +114,14 @@ int main(int argc, char **argv)
   }
   else
   {
-
-    char motor_id_param[50];
-    std::vector<int> motor_ids;
-    int motor_id;
-
-    for (int i = 1; i <= DEFAULT_MOTOR_COUNT; i++)
+    if(!node.getParam("dynamixel_motor_driver/front_motor_id", front_motor_id)
     {
-      // Use a hacky trick I've seen to name mangle the motor ID parameter names
-      sprintf(motor_id_param,"dynamixel_motor_driver/motor%d_id",i);
+      ROS_WARN("Warning, could not find appropriate motor ID for front");
+    }
 
-      if(!node.getParam(motor_id_param, motor_id))
-      {
-        ROS_WARN("Warning, could not find appropriate motor ID on motor %d", i);
-      }
-      else
-      {
-        motor_ids.push_back(motor_id);
-      }
+    if(!node.getParam("dynamixel_motor_driver/rear_motor_id", rear_motor_id)
+    {
+      ROS_WARN("Warning, could not find appropriate motor ID for rear");
     }
 
     if(!node.getParam("dynamixel_motor_driver/motor_tty", motor_tty))
@@ -141,14 +135,13 @@ int main(int argc, char **argv)
       ROS_WARN("Warning, could not find appropriate dynamixel motor baud rate to connect at. Could cause motors to not function.");
       motor_baud = 34;
     }
-
   }
   
   // A good frequency at which to read motor position and publish that to the controller is 100 Hz
   double dt = 0.01;
 
   // Open appropriate USB port that has the dynamixel device in it
-  ROS_INFO("attempting to open /dev/ttyUSB%d",motor_tty);
+  ROS_INFO("Attempting to open /dev/ttyUSB%d",motor_tty);
   bool open_success = open_dxl(motor_tty,motor_baud);
 
   // If we fail to open the device file, warn user and exit
@@ -157,45 +150,44 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  // A vector of ROS standard message for the motor angle, one for each motor
-  std::vector<std_msgs::Int16> motor_angle_commands;
-  // A vector of integers for the motor angle, one for each motor
-  std::vector<short int> sensed_motor_angles;
+  // ROS msgs for each wobbler command
+  std_msgs::Int16 front_motor_angle_cmd;
+  std_msgs::Int16 rear_motor_angle_cmd;
 
-  for (int i = 0; i < motor_ids.size(); i++)
-  {
-    sensed_motor_angles.push_back(0);
-  }
+  int front_motor_ang;
+  int rear_motor_ang;
 
-  // Restate to user the motor communications parameters for each motor ID
   ROS_INFO("Attempting communication with following motors:");
-  for (int i = 0; i <= motor_ids.size(); i++)
-  {
-    ROS_INFO("-motor_id %d at baudrate code %d",motor_id, motor_baud);
-    ros::Subscriber subscriber = node.subscribe(in_topic_name, 1, dynamixelCB); 
-  }
+  ROS_INFO("@ motor_id %d at baudrate code %d",front_motor_id, motor_baud);
+  ROS_INFO("@ motor_id %d at baudrate code %d",rear_motor_id, motor_baud);
 
   // Main program loop to read motor positions from device and push them to ROS topics for each motor
   while(ros::ok()) 
   {
-    // For each of the motors that we have (should be two for this)
-    for (int i = 0; i < motor_ids.size(); i++)
+    // For each of the motors that we have
+
+    // Use Dynamixel library to read the particular motors current position and store it
+    front_motor_ang = read_position(front_motor_id);
+
+    rear_motor_ang = read_position(rear_motor_id);
+
+    // Check if the received value is bad, holdover from older times...it may be important to make a note of for debugging
+    if (front_motor_ang>4096) 
     {
-      // Use Dynamixel library to read the particular motors current position and store it in proper location of the vector
-      sensed_motor_angles[i] = read_position(motor_ids[i]);
-
-      // Check if the received value is bad, holdover from older times...its marginally important to make a note of for debugging
-      if (sensed_motor_angles[i]>4096) 
-      {
-        ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",sensed_motor_angles[i]-4096,g_goal_angle);
-      }
-      // Prepare to publish the received data value
-      motor_angle_commands[i].data = sensed_motor_angles[i];
-
-      // SERIOUSLY FUCKED UP WILL NOT WORK. CHANGE ASAP.
-      pub_jnt.publish(motor_angle_commands[i]);
-      pub_jnt2.publish(motor_angle_commands[i]);
+      ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",front_motor_ang[i], g_front_goal_angle);
     }
+
+    if (rear_motor_ang>4096) 
+    {
+      ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",rear_motor_ang[i], g_rear_goal_angle);
+    }
+
+    front_motor_angle_cmd.data = front_motor_ang;
+    rear_motor_angle_cmd.data = rear_motor_ang;
+
+    // SERIOUSLY FUCKED UP WILL NOT WORK. CHANGE ASAP.
+    pub_jnt.publish(motor_angle_commands[i]);
+    pub_jnt2.publish(motor_angle_commands[i]);
 
   // Take a break, you've had a long day...
    ros::Duration(dt).sleep();
