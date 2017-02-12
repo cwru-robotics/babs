@@ -79,7 +79,7 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
             cloud.clear(); // Reset the point cloud, prepping for another sweep.
             been_awhile = false;
         }
-        // WE get an initial up/down jitter that happens. Can be fixed here, but I dont wanna do that now.
+        // We get an initial up/down jitter that just happens. Can be fixed here, but I dont wanna do that now.
         last_wobbler_angle = wobbler_angle;
         // If it was neither of these, then the sweep isn't completed yet and we shouldnt clear/publish
     }
@@ -93,7 +93,6 @@ void cloudCallback(const PointCloud::ConstPtr& cloud_holder)
     {
         // CORRECTS FOR SOME WEIRD REFLECTION ISSUE WE GET IN THE Y-AXIS. I KNOW ITS HACKY - TZ - 11/21/2016
         pcl::PointXYZ single_point(cloud_holder->points[i].x, -cloud_holder->points[i].y, cloud_holder->points[i].z);
-
         cloud.points.push_back(single_point);
     }
 }

@@ -1,9 +1,14 @@
 <launch> 
-	<!-- Start Hokuyo LIDAR data collection   -->
-	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node" args="_port:=/dev/sensor-front_wobbler_lidar" /> 
+	<!-- Start Hokuyo LIDAR wobbler data collection for front and rear -->
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node_1" args="_port:=/dev/ttyACM0" > 
+		<remap from="scan" to="front_wobbler/scan"/>
+	</node>
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node_2" args="_port:=/dev/ttyACM1" > 
+		<remap from="scan" to="rear_wobbler/scan"/>
+	</node>
 
 	<!-- Open communication driver between ROS and the dynamixel motor for the front wobbler. -->
-	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" /> 
+	<node pkg= "babs_motor_wobbler" type= "dynamixel_motor_driver" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" /> 
 	<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
 
 	<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
