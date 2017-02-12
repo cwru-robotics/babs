@@ -26,17 +26,25 @@ extern "C" {
 }
 
 //globals:
-  short int motor_id = DEFAULT_ID;
-  std::vector<short int> motor_ids;
-  short int baudnum = DEFAULT_BAUDNUM;
-  int ttynum = DEFAULT_TTY_NUM;
-  short int g_goal_angle=0;
+short int motor_id = DEFAULT_ID;
+std::vector<short int> motor_ids;
+short int baudnum = DEFAULT_BAUDNUM;
+int ttynum = DEFAULT_TTY_NUM;
+short int g_goal_angle=0;
 
-void dynamixelCB(const std_msgs::Int16& goal_angle_msg) 
+short int g_front_motor_id;
+short ing g_rear_motor_id;
+  
+void sendFrontMotorCmd(const std_msgs::Int16& goal_angle_msg) 
 { 
-  short int goal_angle = goal_angle_msg.data;
-  g_goal_angle = goal_angle; // for use by main()
-     send_dynamixel_goal(motor_id,goal_angle);
+  g_goal_angle = goal_angle_msg.data; // for use by main()
+  send_dynamixel_goal(g_front_motor_id,goal_angle_msg.data); // When we receive a command message from the cmd topic, send that out on serial line using dynamixel code
+} 
+
+void sendRearMotorCmd(const std_msgs::Int16& goal_angle_msg) 
+{ 
+  g_goal_angle = goal_angle_msg.data; // for use by main()
+  send_dynamixel_goal(g_rear_motor_id,goal_angle_msg.data); // When we receive a command message from the cmd topic, send that out on serial line using dynamixel code
 } 
 
 int main(int argc, char **argv) 
@@ -57,7 +65,7 @@ int main(int argc, char **argv)
   ROS_INFO("output topic: %s",out_topic_name);
 
 */
-  
+
   ros::init(argc,argv,node_name); //name this node 
 
   ros::NodeHandle node; // need this to establish communications with our new node 
