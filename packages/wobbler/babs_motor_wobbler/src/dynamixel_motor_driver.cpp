@@ -189,11 +189,12 @@ int main(int argc, char **argv)
     pub_jnt.publish(front_motor_angle);
     pub_jnt2.publish(rear_motor_angle);
 
-  // Take a break, you've had a long day...
-   ros::Duration(dt).sleep();
-   ros::spinOnce();
-   }
-   // Should not happen until ROS cuts out entirely
+    // Take a break, you've had a long day...
+    ros::Duration(dt).sleep();
+    ros::spinOnce();
+  }
+   
+  // Should not happen until ROS cuts out entirely
   dxl_terminate();
   ROS_INFO("Goodbye!");
   return 0; 
