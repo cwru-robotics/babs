@@ -174,12 +174,12 @@ int main(int argc, char **argv)
     // Check if the received value is bad, holdover from older times...it may be important to make a note of for debugging
     if (front_motor_ang>4096) 
     {
-      ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",front_motor_ang[i], g_front_goal_angle);
+      ROS_WARN("Extremely likely read error from front Dynamixel: angular value of %d at cmd %d, ignoring.",front_motor_ang[i], g_front_goal_angle);
     }
 
     if (rear_motor_ang>4096) 
     {
-      ROS_WARN("Extremely likely read error from Dynamixel: angular value of %d at cmd %d, ignoring.",rear_motor_ang[i], g_rear_goal_angle);
+      ROS_WARN("Extremely likely read error from rear Dynamixel: angular value of %d at cmd %d, ignoring.",rear_motor_ang[i], g_rear_goal_angle);
     }
 
     front_motor_angle_cmd.data = front_motor_ang;
