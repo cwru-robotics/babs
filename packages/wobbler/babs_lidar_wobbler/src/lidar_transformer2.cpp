@@ -120,12 +120,9 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
-    // TZ below
-    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("wobbler_scan_cloud", 1);
+    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
 
     pub_ptr = &pub;
-
-    // WSN below
 
     g_listener_ptr = new tf::TransformListener;
     tf::StampedTransform stfLidar2World;
@@ -147,7 +144,7 @@ int main(int argc, char** argv) {
     }
     ROS_INFO("transform received; ready to process lidar scans");
 
-    ros::Subscriber lidar_subscriber = nh.subscribe("/scan", 1, scanCallback);
+    ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
 
     ros::spin();
 
