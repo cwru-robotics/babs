@@ -11,7 +11,7 @@
 	</node>
 
 	<!-- Open communication driver between ROS and the dynamixel motors for the wobblers (one node for both/all dynamixel motors). -->
-	<node pkg= "babs_motor_wobbler" type= "dynamixel_motor_driver" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="screen" > 
+	<node pkg= "babs_motor_wobbler" type= "dynamixel_motor_driver" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" > 
 		<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
 
 		<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
@@ -22,7 +22,7 @@
 	</node>
 
 	<!-- Static transform between lidar_link frame and front joint frame  -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" >
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" output="screen">
 		<!-- Parameters for the lidar frame transform   -->
 		<param name="dist_to_joint_x" value="-0.175" />
 		<param name="dist_to_joint_y" value="0.15" />
@@ -30,10 +30,11 @@
 		<param name="rot_to_joint_r" value="0.0" />
 		<param name="rot_to_joint_p" value="0.0" />
 		<param name="rot_to_joint_y" value="3.14159265359" />
+		<remap from="/" to="front_wobbler/"/>
 	</node>
 
 	<!-- Static transform between lidar_link frame and rear joint frame  -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" >
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" output="screen" >
 		<!-- Parameters for the lidar frame transform   -->
 		<param name="dist_to_joint_x" value="-0.175" />
 		<param name="dist_to_joint_y" value="-0.3" />
@@ -41,20 +42,23 @@
 		<param name="rot_to_joint_r" value="0.0" />
 		<param name="rot_to_joint_p" value="0.0" />
 		<param name="rot_to_joint_y" value="3.14159265359" />
+		<remap from="/" to="rear_wobbler/"/>
 	</node>
 
 	<!-- Transform dependent on joint angle between joint and the front wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" > 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" output="screen" > 
 		<!-- Dummy params for node.   -->
 		<param name="factor" value="1" />
 		<param name="factor2" value="0.5" />
+		<remap from="/" to="front_wobbler/"/>
 	</node>
 
 	<!-- Transform dependent on joint angle between joint and the rear wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" > 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" output="screen" > 
 		<!-- Dummy params for node.   -->
 		<param name="factor" value="1" />
 		<param name="factor2" value="0.5" />
+		<remap from="/" to="rear_wobbler/"/>
 	</node>
 
 	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same commands to BOTH motors  -->
@@ -68,13 +72,13 @@
 	</node>
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the front hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "front_wobbler_transformer" output="screen">
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "front_wobbler_transformer" >
 		<remap from="scan" to="front_wobbler/scan"/>
 		<remap from="scan_cloud" to="front_wobbler/scan_cloud"/>
 	</node>
 
-	<!-- Publishes point clouds transformed to the lidar_link frame from the rear  hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "rear_wobbler_transformer" output="screen" >
+	<!-- Publishes point clouds transformed to the lidar_link frame from the rear hokuyo LaserScans, using motor position. -->
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "rear_wobbler_transformer" >
 		<remap from="scan" to="rear_wobbler/scan"/>
 		<remap from="scan_cloud" to="rear_wobbler/scan_cloud"/>
 	</node>

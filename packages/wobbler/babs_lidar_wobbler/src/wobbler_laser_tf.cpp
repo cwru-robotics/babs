@@ -49,7 +49,7 @@ int main(int argc, char** argv){
 
 	ros::NodeHandle node;
 	node_ptr = &node;
-	ros::Subscriber sub = node.subscribe("/dynamixel_motor1_ang", 10, &poseCallback);
+	ros::Subscriber sub = node.subscribe("/dynamixel_motor1_ang", 1, &poseCallback);
 
 	ros::spin();
 	return 0;
