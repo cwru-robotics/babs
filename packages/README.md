@@ -1,9 +1,9 @@
-#crio_code
-This directory contains all code that will run the cRIO Power PC. This will handle the PSO, GPS and
-Encoders.  However USB interface instead of the cRIO.
-
 #gps-msgs
 gps-msgs contains all the different msgs that can be recieved from the GPS module.
+
+#high_level_control
+'''
+'''
 
 #novatel
 novatel contains the ROS node for the GPS module on BABS
@@ -17,13 +17,13 @@ roslaunch odom_filters filters.launch
 '''
 
 #razor_imu_9of
+'''
+'''
+
+#roboteq
 roboteq contains the ROS node for the motor controller on BABS.
 '''
 roslaunch roboteq_driver motor_controller.launch
-'''
-
-#sentry
-'''
 '''
 
 #usb_cams
