@@ -32,16 +32,16 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
 
 }
 
-// Program starting point.
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "lidar_wobbler_transformer");
+
+    ros::init(argc, argv, "lidar_calibration_unit_test");
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
-    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
+    // That node should compare a set of SICK and wobbler point clouds (2D) and 
+    ROS_INFO("Starting lidar calibration test. ")
 
-    pub_ptr = &pub;
-
+    //ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
    
     ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
 

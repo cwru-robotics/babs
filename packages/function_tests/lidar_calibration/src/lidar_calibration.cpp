@@ -44,7 +44,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
 
 // Program starting point.
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "lidar_wobbler_transformer");
+    ros::init(argc, argv, "lidar_calibration");
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
