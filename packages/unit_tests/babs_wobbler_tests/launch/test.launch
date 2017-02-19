@@ -1,0 +1,73 @@
+<launch> 
+	<!-- Start test node-->
+
+	<node pkg= ""  type="hokuyo_node" name= "front_hokuyo_driver" args="_port:=/dev/ttyACM0" > 
+		<remap from="scan" to="front_wobbler/scan"/>
+	</node>
+
+	<!-- Start lidar_calibration node-->
+	<node pkg= ""  type="hokuyo_node" name= "rear_hokuyo_driver" args="_port:=/dev/ttyACM1" > 
+		<remap from="scan" to="rear_wobbler/scan"/>
+	</node>
+
+	<!-- Static transform between lidar_link frame and front joint frame  -->
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" output="screen" args="name:=front">
+		<!-- Parameters for the lidar frame transform   -->
+		<remap from="/" to="front_wobbler/"/>
+		<remap from="angle" to="front_wobbler/angle"/>
+	</node>
+
+	<!-- Static transform between lidar_link frame and rear joint frame  -->
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" output="screen" args="name:=rear" >
+		<!-- Parameters for the lidar frame transform   -->
+		<remap from="/" to="rear_wobbler/"/>
+		<remap from="angle" to="rear_wobbler/angle"/>
+	</node>
+
+	<!-- Transform dependent on joint angle between joint and the front wobbling LIDAR lasers source.   -->
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" output="screen" args="name:=front" > 
+		<!-- Dummy params for node.   -->
+		<remap from="angle" to="front_wobbler/angle"/>
+	</node>
+
+	<!-- Transform dependent on joint angle between joint and the rear wobbling LIDAR lasers source.   -->
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" output="screen" args="name:=rear" > 
+		<!-- Dummy params for node.   -->
+		<remap from="angle" to="rear_wobbler/angle"/>
+	</node>
+
+	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same commands to BOTH motors  -->
+	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="screen" > 
+		<!-- Params for node.   -->
+		<param name="min_angle" value="500" /> <!-- TRENT CHANGE TO 300 IMMEDIATELY -->
+		<param name="max_angle" value="800" />
+		<param name="wobble_speed" value="1" /> <!-- TRENT CHANGE TO 3 IMMEDIATELY -->
+		<param name="front_motor_id" value="1" />
+		<param name="rear_motor_id" value="2" />
+	</node>
+
+	<!-- Publishes point clouds transformed to the lidar_link frame from the front hokuyo LaserScans, using motor position. -->
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "front_wobbler_transformer" args="name:=front" output="screen" >
+		<remap from="scan" to="front_wobbler/scan"/>
+		<remap from="scan_cloud" to="front_wobbler/scan_cloud"/>
+	</node>
+
+	<!-- Publishes point clouds transformed to the lidar_link frame from the rear hokuyo LaserScans, using motor position. -->
+	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "rear_wobbler_transformer" args="name:=rear" output="screen" >
+		<remap from="scan" to="rear_wobbler/scan"/>
+		<remap from="scan_cloud" to="rear_wobbler/scan_cloud"/>
+	</node>
+
+	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the front wobbler, based on motor angle. -->
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "front_hokuyo_pcl_stitcher" args="name:=front" >
+		<remap from="scan_cloud" to="front_wobbler/scan_cloud"/>
+		<remap from="point_cloud" to="front_wobbler/point_cloud"/>
+		<remap from="angle" to="front_wobbler/angle"/>
+	</node>
+
+	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the rear wobbler, based on motor angle. -->
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "rear_hokuyo_pcl_stitcher" args="name:=rear" >
+
+	</node>
+
+</launch>
