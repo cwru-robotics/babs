@@ -12,6 +12,8 @@ double motorEncodedAngle;
 double factor;
 double factor2;
 
+std::string name;
+
 // Gives the best idea of the transform between the babs lidar link frame,
 //  and the location of the frame. Static transform.
 ros::NodeHandle * node_ptr;
@@ -29,19 +31,19 @@ void poseCallback(const std_msgs::Int16& msg){
 	// Magic numbers that you CAN change if needed, but should NOT change unless you empirically think it's needed.
     if(!node_ptr->getParam("factor", factor))
     {
-        ROS_WARN("Using arbitrary value.");
+        ROS_WARN("Using arbitrary value1.");
         factor = 1;
     }
     if(!node_ptr->getParam("factor2", factor2))
     {
-        ROS_WARN("Using arbitrary value.");
+        ROS_WARN("Using arbitrary value2.");
         factor2 = 0.5;
     }
 
 	q.setRPY(0, (motorEncodedAngle*factor + 1024)/1303.8/factor2, 0);
 	
 	transform.setRotation(q);
-	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "wobbler_joint", "laser"));
+	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), name + "wobbler_joint", name + "wobbler_laser"));
 }
 
 int main(int argc, char** argv){
@@ -49,7 +51,10 @@ int main(int argc, char** argv){
 
 	ros::NodeHandle node;
 	node_ptr = &node;
-	ros::Subscriber sub = node.subscribe("/dynamixel_motor1_ang", 1, &poseCallback);
+
+	name = argv[2];
+
+	ros::Subscriber sub = node.subscribe("angle", 1, &poseCallback);
 
 	ros::spin();
 	return 0;

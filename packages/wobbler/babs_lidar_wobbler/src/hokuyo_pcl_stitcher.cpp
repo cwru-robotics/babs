@@ -123,10 +123,10 @@ int main(int argc, char **argv)
         max_ang = 1100;
     }
 
-    ros::Subscriber my_subscriber_object = nh.subscribe("/dynamixel_motor1_ang", 1, hokuyoMotorCallback);
-    ros::Subscriber my_subscriber_object2 = nh.subscribe("/wobbler_scan_cloud", 1, cloudCallback);
+    ros::Subscriber my_subscriber_object = nh.subscribe("angle", 1, hokuyoMotorCallback);
+    ros::Subscriber my_subscriber_object2 = nh.subscribe("scan_cloud", 1, cloudCallback);
 
-    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/wobbler_3d_cloud", 1);
+    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("point_cloud", 1);
     pubCloud_ptr = &pubCloud;
 
     ros::spin();

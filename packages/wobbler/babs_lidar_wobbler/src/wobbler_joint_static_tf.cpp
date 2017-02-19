@@ -10,6 +10,8 @@
 double motorEncodedAngle;
 ros::NodeHandle * node_ptr;
 
+std::string name;
+
 // Gives the best idea of the transform between the babs lidar link frame,
 //  and the location of the frame. Static transform. Needs updated.
 void poseCallback(const std_msgs::Int16& msg){
@@ -66,7 +68,7 @@ void poseCallback(const std_msgs::Int16& msg){
 	q.setRPY(rot_to_joint_r, rot_to_joint_p, rot_to_joint_y);
 	
 	transform.setRotation(q);
-	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "lidar_link", "wobbler_joint"));
+	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "lidar_link", name + "wobbler_joint"));
 }
 
 int main(int argc, char** argv){
@@ -74,7 +76,11 @@ int main(int argc, char** argv){
 
 	ros::NodeHandle node;
 	node_ptr = &node;
-	ros::Subscriber sub = node.subscribe("/front OR REAR wobbler angle SAME FOR OTHER", 10, &poseCallback);
+	
+	name = argv[2];
+
+	ros::Subscriber sub = node.subscribe("angle", 10, &poseCallback);
+
 
 	ros::spin();
 	return 0;

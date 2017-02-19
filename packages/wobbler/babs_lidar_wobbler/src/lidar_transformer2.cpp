@@ -36,6 +36,9 @@ double wobbler_angle;
 double scanning_upwards;
 double last_wobbler_angle;
 
+std::string name;
+std::string laser_name;
+
 // This callback function is called whenever we receive a laser scan message
 //  It will publish the scan as a point cloud. This cloud is a 2D slice of the final point cloud that results from the wobbler sweeping and getting stitched together.
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
@@ -43,7 +46,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     // get the transform from LIDAR frame to world frame
     tf::StampedTransform stfLidar2World;
     //specialized for lidar_wobbler; more generally, use scan_in->header.frame_id
-    g_listener_ptr->lookupTransform("lidar_link", "laser", ros::Time(0), stfLidar2World);
+    g_listener_ptr->lookupTransform("lidar_link", laser_name, ros::Time(0), stfLidar2World);
     //extract transform from transformStamped:
     tf::Transform tf = xformUtils.get_tf_from_stamped_tf(stfLidar2World);    
     //stfLidar2World is only the pose of the LIDAR at the LAST ping...
@@ -120,6 +123,10 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
+    name = argv[2];
+
+    laser_name = name + "laser";
+
     ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
 
     pub_ptr = &pub;
@@ -132,7 +139,7 @@ int main(int argc, char** argv) {
     while (tferr) {
         tferr = false;
         try {
-            g_listener_ptr->lookupTransform("lidar_link", "laser", ros::Time(0), stfLidar2World);
+            g_listener_ptr->lookupTransform("lidar_link", laser_name, ros::Time(0), stfLidar2World);
         } catch (tf::TransformException &exception) {
 
             ROS_WARN("%s; retrying...", exception.what());
@@ -142,6 +149,7 @@ int main(int argc, char** argv) {
 
         }
     }
+
     ROS_INFO("transform received; ready to process lidar scans");
 
     ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
