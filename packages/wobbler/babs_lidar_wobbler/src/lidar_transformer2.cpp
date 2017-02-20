@@ -120,10 +120,9 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
 // Program starting point.
 int main(int argc, char** argv) {
     ros::init(argc, argv, "lidar_wobbler_transformer");
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
     nh_ptr = &nh;
 
-    name = argv[2];
 
     laser_name = name + "laser";
 
@@ -146,7 +145,6 @@ int main(int argc, char** argv) {
             tferr = true;
             ros::Duration(0.5).sleep(); // sleep for half a second
             ros::spinOnce();
-
         }
     }
 

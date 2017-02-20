@@ -74,10 +74,8 @@ void poseCallback(const std_msgs::Int16& msg){
 int main(int argc, char** argv){
 	ros::init(argc, argv, "wobbler_joint_static_tf");
 
-	ros::NodeHandle node;
+	ros::NodeHandle node("~");
 	node_ptr = &node;
-	
-	name = argv[2];
 
 	ros::Subscriber sub = node.subscribe("angle", 10, &poseCallback);
 

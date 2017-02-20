@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
-#include<std_msgs/Int16.h> 
+#include <std_msgs/Int16.h> 
 
 // Transform publisher between the "wobbler_joint" frame (the location of the axis of rotation of the wobbler), 
 //    and "laser", which is the approximate location of the source of the wobbling LIDAR laser.
@@ -49,10 +49,8 @@ void poseCallback(const std_msgs::Int16& msg){
 int main(int argc, char** argv){
 	ros::init(argc, argv, "my_tf_b2");
 
-	ros::NodeHandle node;
+	ros::NodeHandle node("~");
 	node_ptr = &node;
-
-	name = argv[2];
 
 	ros::Subscriber sub = node.subscribe("angle", 1, &poseCallback);
 

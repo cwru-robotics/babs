@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "dynamixel_motor_wobble"); 
-    ros::NodeHandle node; 
+    ros::NodeHandle node; // Can make "...("~");" if needed.
 
 /* Dude, FUCK name mangling
     char front_cmd_topic_name[50];
