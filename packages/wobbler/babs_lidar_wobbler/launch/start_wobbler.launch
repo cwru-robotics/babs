@@ -84,7 +84,7 @@
 		<remap from="angle" to="rear_wobbler/angle"/>
 	</node>
 
-	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same commands to BOTH motors  -->
+	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same motrion cmd to both front and rear (aka f/r) dynamixel motors  -->
 	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="screen" > 
 		<!-- Params for node.   -->
 		<param name="min_ang" value="500" /> <!-- TRENT CHANGE TO 300 IMMEDIATELY -->

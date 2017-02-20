@@ -46,10 +46,11 @@ void poseCallback(const std_msgs::Int16& msg){
 	
 	transform.setRotation(q);
 	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), wobbler_joint_name, wobbler_laser_name));
+	ROS_INFO("SENT %s to %s FRAME TRANSFORM.", wobbler_joint_name.c_str(), wobbler_laser_name.c_str());
 }
 
 int main(int argc, char** argv){
-	ros::init(argc, argv, "my_tf_b2");
+	ros::init(argc, argv, "wobbler_laser_tf");
 
 	ros::NodeHandle node("~");
 	node_ptr = &node;
