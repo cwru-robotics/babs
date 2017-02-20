@@ -40,16 +40,23 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
         wobbler_angle = message_holder.data;
 
         // Get the most updated value of the wobbler's min/max wobbling angle. The angle can change in the middle of operation.
-        if(!nh_ptr->getParam("/" + name + "_hokuyo_driver/min_ang", min_ang))
+
+        if(!nh_ptr->getParam("min_ang", min_ang))
         {
-            ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
-            min_ang = 500;
+            ROS_WARN("FAILED TO GET WOBBLER MIN ANG IN CALLBACK");
+        }
+        else
+        {
+            ROS_INFO("SUCCEEDED TO GET WOBBLER MIN ANG IN CALLBACK");
         }
 
-        if(!nh_ptr->getParam("/" + name + "_hokuyo_driver/max_ang", max_ang))
+        if(!nh_ptr->getParam("max_ang", max_ang))
         {
-            ROS_WARN("Wobbler point cloud could not find wobbler maximum angle (max_ang) on param server. Using arbitrary value.");
-            max_ang = 1000;
+            ROS_WARN("FAILED TO GET WOBBLER MAX ANG IN CALLBACK");
+        }
+        else
+        {
+            ROS_INFO("SUCCEEDED TO GET WOBBLER MAX ANG IN CALLBACK");
         }
 
         scan_callback_count++;
@@ -106,26 +113,20 @@ int main(int argc, char **argv)
     ros::NodeHandle nh("~");
     nh_ptr = &nh;
 
-    name = argv[2];
-    //ROS_INFO("hokuyo_pcl_stitcher name: %s", name);
-
-    // Get the most updated value of the wobbler's min/max wobbling angle. The angle can change in the middle of operation.
-    if(!nh_ptr->getParam("/" + name + "_hokuyo_driver/min_ang", min_ang))
+    if(!nh_ptr->getParam("/motor_wobble/min_ang", min_ang))
     {
-        ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
-        min_ang = 500;
+        ROS_WARN("FAILED TO GET WOBBLER MIN ANG");
     }
 
-    if(!nh_ptr->getParam("/" + name + "_hokuyo_driver/max_ang", max_ang))
+    if(!nh_ptr->getParam("/motor_wobble/max_ang", max_ang))
     {
-        ROS_WARN("Wobbler point cloud could not find wobbler maximum angle (max_ang) on param server. Using arbitrary value.");
-        max_ang = 1000;
+        ROS_WARN("FAILED TO GET WOBBLER MAX ANG");
     }
 
     // Internal scanning/sweeping parameters
     bool scanning_upwards = true;
     bool been_awhile = false;
-    min_scan_callbacks = (max_ang - min_ang) / 2; // Require that the minimum number of scans be half the total expected number of scans. ie the wobbler must move halfway through single sweep before sending new point cloud.
+    min_scan_callbacks = (max_ang - min_ang) / 2; // Require that the minimum number of scans be half the total expected number of scans (i.e, the wobbler must move halfway through single sweep before sending new point cloud)
     scan_callback_count = 0;
 
     ros::Subscriber my_subscriber_object = nh.subscribe("angle", 1, hokuyoMotorCallback);

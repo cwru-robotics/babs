@@ -22,7 +22,7 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 using namespace std;
 
 // These are global pointers
-ros::NodeHandle * nh_ptr;
+ros::NodeHandle * node_ptr;
 pcl::PointCloud<pcl::PointXYZ> cloud;
 ros::Publisher * pubCloud_ptr;
 tf::TransformListener *g_listener_ptr; //a transform listener
@@ -36,8 +36,8 @@ double wobbler_angle;
 double scanning_upwards;
 double last_wobbler_angle;
 
-std::string name;
-std::string laser_name;
+// Parameter that should end up being "front_wobbler_laser or "rear_wobbler_laser" that names the transform frame of the f/r wobbler laser
+std::string wobbler_laser_name;
 
 // This callback function is called whenever we receive a laser scan message
 //  It will publish the scan as a point cloud. This cloud is a 2D slice of the final point cloud that results from the wobbler sweeping and getting stitched together.
@@ -46,7 +46,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     // get the transform from LIDAR frame to world frame
     tf::StampedTransform stfLidar2World;
     //specialized for lidar_wobbler; more generally, use scan_in->header.frame_id
-    g_listener_ptr->lookupTransform("lidar_link", laser_name, ros::Time(0), stfLidar2World);
+    g_listener_ptr->lookupTransform("lidar_link", wobbler_laser_name, ros::Time(0), stfLidar2World);
     //extract transform from transformStamped:
     tf::Transform tf = xformUtils.get_tf_from_stamped_tf(stfLidar2World);    
     //stfLidar2World is only the pose of the LIDAR at the LAST ping...
@@ -121,10 +121,12 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
 int main(int argc, char** argv) {
     ros::init(argc, argv, "lidar_wobbler_transformer");
     ros::NodeHandle nh("~");
-    nh_ptr = &nh;
+    node_ptr = &nh;
 
-
-    laser_name = name + "laser";
+    if(!node_ptr->getParam("wobbler_laser_name", wobbler_laser_name))
+    {
+        ROS_WARN("FAILED TO GET WOBBLER LASER NAME");
+    }
 
     ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
 
@@ -138,7 +140,7 @@ int main(int argc, char** argv) {
     while (tferr) {
         tferr = false;
         try {
-            g_listener_ptr->lookupTransform("lidar_link", laser_name, ros::Time(0), stfLidar2World);
+            g_listener_ptr->lookupTransform("lidar_link", wobbler_laser_name, ros::Time(0), stfLidar2World);
         } catch (tf::TransformException &exception) {
 
             ROS_WARN("%s; retrying...", exception.what());

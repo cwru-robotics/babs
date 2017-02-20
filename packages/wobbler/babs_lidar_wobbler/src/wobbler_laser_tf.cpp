@@ -12,7 +12,9 @@ double motorEncodedAngle;
 double factor;
 double factor2;
 
-std::string name;
+// Parameter that should end up being "front_wobbler_joint" or "rear_wobbler_joint" that names the transform frame of the f/r wobbler joint, and for the wobbler laser as well
+std::string wobbler_joint_name; 
+std::string wobbler_laser_name;
 
 // Gives the best idea of the transform between the babs lidar link frame,
 //  and the location of the frame. Static transform.
@@ -43,7 +45,7 @@ void poseCallback(const std_msgs::Int16& msg){
 	q.setRPY(0, (motorEncodedAngle*factor + 1024)/1303.8/factor2, 0);
 	
 	transform.setRotation(q);
-	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), name + "wobbler_joint", name + "wobbler_laser"));
+	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), wobbler_joint_name, wobbler_laser_name));
 }
 
 int main(int argc, char** argv){
@@ -51,6 +53,16 @@ int main(int argc, char** argv){
 
 	ros::NodeHandle node("~");
 	node_ptr = &node;
+
+	if(!node_ptr->getParam("wobbler_joint_name", wobbler_joint_name))
+	{
+		ROS_WARN("FAILED TO GET WOBBLER JOINT NAME");
+	}
+
+	if(!node_ptr->getParam("wobbler_laser_name", wobbler_laser_name))
+	{
+		ROS_WARN("FAILED TO GET WOBBLER LASER NAME");
+	}
 
 	ros::Subscriber sub = node.subscribe("angle", 1, &poseCallback);
 

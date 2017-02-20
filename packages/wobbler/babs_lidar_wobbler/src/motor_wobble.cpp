@@ -22,10 +22,10 @@ int main(int argc, char **argv) {
     ros::Publisher front_motor_pub = node.advertise<std_msgs::Int16>("front_wobbler/cmd", 1);
 
     ros::Publisher rear_motor_pub = node.advertise<std_msgs::Int16>("rear_wobbler/cmd", 1);
-    
+
     std_msgs::Int16 int_angle; 
-   double dt = 0.01; // repeat at freq 1/dt
-   ros::Rate naptime(1/dt); //create a ros object from the ros “Rate” class; 
+    double dt = 0.01; // repeat at freq 1/dt
+    ros::Rate naptime(1/dt); //create a ros object from the ros “Rate” class; 
 
     int_angle.data = 0.0;
 
@@ -48,12 +48,12 @@ int main(int argc, char **argv) {
         if (loop_counter % 10 == 0)
         {
 
-            if(!node.getParam("min_angle", min_ang))
+            if(!node.getParam("min_ang", min_ang))
             {
                 min_ang = 500;
             }
 
-            if(!node.getParam("max_angle", max_ang))
+            if(!node.getParam("max_ang", max_ang))
             {
                 max_ang = 1000;  
             }
