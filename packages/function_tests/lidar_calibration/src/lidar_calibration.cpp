@@ -48,33 +48,24 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
-    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
+    float x_dist = 99;
+    float y_dist = 99;
+    float z_dist = 99;
+    float roll = 99;
+    float pitch = 99;
+    float yaw = 99;
 
-    pub_ptr = &pub;
+    bool calibration_done = true;
 
-    g_listener_ptr = new tf::TransformListener;
-    tf::StampedTransform stfLidar2World;
-    bool tferr = true;
-    ROS_INFO("trying to get tf of lidar_link w/rt world: ");
-    //topic /scan has lidar data in frame_id: lidar_link
-    while (tferr) {
-        tferr = false;
-        try {
-            g_listener_ptr->lookupTransform("lidar_link", "laser", ros::Time(0), stfLidar2World);
-        } catch (tf::TransformException &exception) {
+    nh_ptr->setParam("/calibration_done", calibration_done);
 
-            ROS_WARN("%s; retrying...", exception.what());
-            tferr = true;
-            ros::Duration(0.5).sleep(); // sleep for half a second
-            ros::spinOnce();
-
-        }
-    }
-    ROS_INFO("transform received; ready to process lidar scans");
-
-    ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
-
+    nh_ptr->setParam("/lidar_calibration_test/x_dist", x_dist);
+    nh_ptr->setParam("/lidar_calibration_test/y_dist", y_dist);
+    nh_ptr->setParam("/lidar_calibration_test/z_dist", z_dist);
+    nh_ptr->setParam("/lidar_calibration_test/roll", roll);
+    nh_ptr->setParam("/lidar_calibration_test/pitch", pitch);
+    nh_ptr->setParam("/lidar_calibration_test/yaw", yaw);
+    
     ros::spin();
-
     return 0;
 }
