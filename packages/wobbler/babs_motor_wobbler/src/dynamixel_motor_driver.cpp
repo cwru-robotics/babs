@@ -158,8 +158,8 @@ int main(int argc, char **argv)
   int rear_motor_ang;
 
   ROS_INFO("Attempting communication with following motors:");
-  ROS_INFO("@ motor_id %d at baudrate code %d",g_front_motor_id, motor_baud);
-  ROS_INFO("@ motor_id %d at baudrate code %d",g_rear_motor_id, motor_baud);
+  ROS_INFO("     @ motor_id %d at baudrate code %d",g_front_motor_id, motor_baud);
+  ROS_INFO("     @ motor_id %d at baudrate code %d",g_rear_motor_id, motor_baud);
 
   // Main program loop to read motor positions from device and push them to ROS topics for each motor
   while(ros::ok()) 

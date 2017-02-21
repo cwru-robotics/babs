@@ -74,6 +74,8 @@ void poseCallback(const std_msgs::Int16& msg){
 	transform.setOrigin( tf::Vector3(dist_to_joint_x, dist_to_joint_y, dist_to_joint_z) ); 
 	q.setRPY(rot_to_joint_r, rot_to_joint_p, rot_to_joint_y);
 	
+	ROS_INFO("SETTING LIDAR LINK TO WOBBLER JOINT NAME");
+
 	transform.setRotation(q);
 	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "lidar_link", wobbler_joint_name));
 }
