@@ -13,3 +13,6 @@
 [submodule "packages/high_level_control/hector_slam"]
 	path = packages/high_level_control/hector_slam
 	url = https://github.com/tu-darmstadt-ros-pkg/hector_slam
+[submodule "packages/high_level_control/robot_localization"]
+	path = packages/high_level_control/robot_localization
+	url = https://github.com/cra-ros-pkg/robot_localization
