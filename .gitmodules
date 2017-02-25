@@ -15,4 +15,13 @@
 	url = https://github.com/tu-darmstadt-ros-pkg/hector_slam
 [submodule "packages/high_level_control/robot_localization"]
 	path = packages/high_level_control/robot_localization
-	url = https://github.com/cra-ros-pkg/robot_localization
+	url = https://github.com/cra-ros-pkg/robot_localization.git
+[submodule "packages/wobbler/wobbler_util_pkgs/serial"]
+	path = packages/wobbler/wobbler_util_pkgs/serial
+	url = https://github.com/wjwwood/serial
+[submodule "packages/wobbler/wobbler_util_pkgs/geographic_info"]
+	path = packages/wobbler/wobbler_util_pkgs/geographic_info
+	url = https://github.com/ros-geographic-info/geographic_info.git
+[submodule "packages/wobbler/wobbler_util_pkgs/unique_identifier"]
+	path = packages/wobbler/wobbler_util_pkgs/unique_identifier
+	url = https://github.com/ros-geographic-info/unique_identifier.git
