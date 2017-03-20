@@ -1,21 +1,17 @@
+// Created Feb 19th ish by Trent Ziemer
 #include <math.h>
 #include <stdlib.h>
 #include <string>
 #include <vector>
 #include <ros/ros.h>
-
 #include <std_msgs/Int16.h>
-
 #include <tf/transform_listener.h>
 #include <xform_utils/xform_utils.h>
 #include <sensor_msgs/LaserScan.h>
-
 #include <pcl_ros/point_cloud.h> 
 #include <pcl/point_types.h> 
 typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
-
 using namespace std;
-
 ros::NodeHandle * nh_ptr;
 
 // These are global variables used as parameters for the wobblers angle
@@ -25,10 +21,8 @@ double last_wobbler_angle;
 
 // This callback function is called whenever we receive a laser scan message
 //  It will publish the scan as a point cloud. This cloud is a 2D slice of the final point cloud that results from the wobbler sweeping and getting stitched together.
-void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
-   
-
-
+void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) 
+{
 
 }
 
@@ -94,8 +88,7 @@ int main(int argc, char** argv) {
     	}
     	else
     	{
-    		ROS_INFO("Calib test waiting...");
-
+    		ROS_INFO("waiting for calibration to complete...");
     	}
     }
 
@@ -106,7 +99,7 @@ int main(int argc, char** argv) {
 		checkCalibVal("pitch", true_pitch) &&
 		checkCalibVal("yaw", true_yaw))
 	{
-		ROS_INFO("TEST PASSED: ALL VALUES WITHIN BOUNDS");
+		ROS_INFO("TEST PASSED: All values are within bounds");
 	}
 	else
 	{
