@@ -1,6 +1,3 @@
-// LIDAR Transformer node for babs_lidar_wobbler.
-// Pulled from a completed homework assignment for Modern Robotics Programming by Trent Ziemer, heavily based on a minimal node written by Dr. Wyatt Newman.
-// Original node name was lidar_transformer. This is ...2 because it's just a variant on that node from a different package.
 
 #include <math.h>
 #include <stdlib.h>
@@ -48,16 +45,16 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
-    float x_dist = 99;
-    float y_dist = 99;
-    float z_dist = 99;
-    float roll = 99;
-    float pitch = 99;
-    float yaw = 99;
+    float x_dist = 1.6;
+    float y_dist = 5.63;
+    float z_dist = -0.63;
+    float roll = 0.05011123;
+    float pitch = 1.12;
+    float yaw = -0.1511;
 
     bool calibration_done = true;
 
-    nh_ptr->setParam("/calibration_done", calibration_done);
+
 
     nh_ptr->setParam("/lidar_calibration_test/x_dist", x_dist);
     nh_ptr->setParam("/lidar_calibration_test/y_dist", y_dist);
@@ -66,6 +63,8 @@ int main(int argc, char** argv) {
     nh_ptr->setParam("/lidar_calibration_test/pitch", pitch);
     nh_ptr->setParam("/lidar_calibration_test/yaw", yaw);
     
+    nh_ptr->setParam("/calibration_done", calibration_done);
+
     ros::spin();
     return 0;
 }

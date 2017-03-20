@@ -1,4 +1,3 @@
-
 #include <math.h>
 #include <stdlib.h>
 #include <string>
@@ -58,7 +57,7 @@ bool checkCalibVal(std::string calibValName, float true_val)
     }
     else
     {
-    	ROS_WARN("No %s parameter, whats up with that?", calibValName.c_str());
+    	ROS_WARN("No %s parameter found, whats up with that?", calibValName.c_str());
     }
     return false;
 }
@@ -76,8 +75,6 @@ int main(int argc, char** argv) {
     ROS_INFO("Starting lidar 2d-3d calibration test.");
 
     ROS_INFO("Waiting for calibration to complete");
-
-
 
     // Maximum error fraction that is considered acceptable 
     float error_bound = 0.05;
@@ -116,14 +113,11 @@ int main(int argc, char** argv) {
 		ROS_WARN("TEST FAILED: Some values not found or not within bounds");
 	}
 
-
-
-
     //ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
    
     //ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
 
-    ros::spin();
+    ROS_INFO("Closing out of tests...");
 
     return 0;
 }

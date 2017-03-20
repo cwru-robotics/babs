@@ -13,7 +13,7 @@
 	<param name="roll"   value="0.05" />
 	<param name="pitch"  value="1.1" />
 	<param name="yaw"    value="-0.15132" />
-    -->
+    	-->
 	</node>
 
 	<!-- Start lidar_calibration node-->
