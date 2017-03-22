@@ -10,7 +10,6 @@ find_package(catkin_simple REQUIRED)
 #find_package(PCL 1.7 REQUIRED)
 #include_directories(${PCL_INCLUDE_DIRS})
 
-
 #uncomment the following 4 lines to use the Eigen library
 #find_package(cmake_modules REQUIRED)
 #find_package(Eigen3 REQUIRED)
@@ -19,27 +18,15 @@ find_package(catkin_simple REQUIRED)
 
 catkin_simple()
 
-# example boost usage
-# find_package(Boost REQUIRED COMPONENTS system thread)
-
-# C++0x support - not quite the same as final C++11!
-# use carefully;  can interfere with point-cloud library
-# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-
 # Libraries: uncomment the following and edit arguments to create a new library
 # cs_add_library(my_lib src/my_lib.cpp)   
 
-# Executables: uncomment the following and edit arguments to compile new nodes
-# may add more of these lines for more nodes from the same package
+# Executables
 cs_add_executable(motor_wobble src/motor_wobble.cpp)
 cs_add_executable(wobbler_joint_static_tf src/wobbler_joint_static_tf.cpp)
 cs_add_executable(wobbler_laser_tf src/wobbler_laser_tf.cpp)
 cs_add_executable(hokuyo_pcl_stitcher src/hokuyo_pcl_stitcher.cpp)
-cs_add_executable(lidar_transformer2 src/lidar_transformer2.cpp)
-
-#the following is required, if desire to link a node in this package with a library created in this same package
-# edit the arguments to reference the named node and named library within this package
-# target_link_library(example my_lib)
+cs_add_executable(wobbler_transformer src/wobbler_transformer.cpp)
 
 cs_install()
 cs_export()

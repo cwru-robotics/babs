@@ -1,6 +1,7 @@
-// LIDAR Transformer node for babs_lidar_wobbler.
+// LIDAR Scan to Point Cloud Transformer node for babs_lidar_wobbler package for BABS Wobbler
 // Pulled from a completed homework assignment for Modern Robotics Programming by Trent Ziemer, heavily based on a minimal node written by Dr. Wyatt Newman.
-// Original node name was lidar_transformer. This is ...2 because it's just a variant on that node from a different package.
+// Original node name was lidar_transformer.
+// Now called wobbler_transformer
 
 #include <math.h>
 #include <stdlib.h>
@@ -52,7 +53,7 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     //stfLidar2World is only the pose of the LIDAR at the LAST ping...
     //better would be to consider separate transforms for each ping
     //using the above transform for all points is adequate approx if LIDAR is wobbling slowly enough
-    Eigen::Affine3d affine_tf,affine_tf_inv; //can use an Eigen type "affine" object for transformations
+    Eigen::Affine3d affine_tf, affine_tf_inv; //can use an Eigen type "affine" object for transformations
     //convert transform to Eigen::Affine3d
     affine_tf = xformUtils.transformTFToAffine3d(tf); //can use this to transform points to world frame
     affine_tf_inv = affine_tf.inverse();
@@ -62,8 +63,8 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     g_pt_vecs_wrt_world_frame.clear();
 
     ROS_INFO("received %d ranges: ", npts);
-    double start_ang = scan_in->angle_min; //get start and end angles from scan message
-    double end_ang = scan_in->angle_max;   //should be -90 deg to +90 deg
+    double start_ang = scan_in->angle_min; // get start and end angles from scan message
+    double end_ang = scan_in->angle_max;   // should be -90 deg to +90 deg
     double d_ang = (end_ang - start_ang) / (npts - 1); //samples are at this angular increment
     ROS_INFO("d_ang = %f", d_ang);
     Eigen::Vector3d vec; //var to hold one point at a time
@@ -117,7 +118,6 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     pub_ptr->publish(msg);
 }
 
-// Program starting point.
 int main(int argc, char** argv) {
     ros::init(argc, argv, "lidar_wobbler_transformer");
     ros::NodeHandle nh("~");
@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    ROS_INFO("transform received; ready to process lidar scans");
+    ROS_INFO("Transform received; ready to process lidar scans");
 
     ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
 

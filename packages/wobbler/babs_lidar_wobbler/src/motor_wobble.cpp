@@ -21,7 +21,6 @@ void frontAngleCB(const std_msgs::Int16& angleHolder)
 // Quick and dirty ROS-based initialization
 bool waitForSubs()
 {
-    // To get 
     ros::Subscriber front_angle_sub = nh_ptr->subscribe(g_motor_angle_topic_name, 1, frontAngleCB);
     // NIMPL: ros::Subscriber rear_angle_sub = nh_ptr->subscribe("rear_wobbler/angle", 1, rearAngleCB);
 
@@ -67,7 +66,7 @@ int main(int argc, char **argv) {
         command = g_current_wobbler_angle;
     }
     // Let user know what initial value of the angle we are going to command
-    ROS_INFO("Initial wobbler motor angle (front and rear) being commanded to %d", command);
+    ROS_INFO("Wobbler motor angle (front and rear) starting command is at %d", command);
 
     // Controls whether the wobbler motors will increase or decrease in angle initially.
     bool increasing = false;
