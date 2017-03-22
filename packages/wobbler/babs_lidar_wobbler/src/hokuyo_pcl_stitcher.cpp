@@ -56,7 +56,9 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
         {
             ROS_INFO("SUCCEEDED TO GET WOBBLER MAX ANG IN CALLBACK");
         }
-
+        // Require that the minimum number of scans done be half the total expected number of scans to do (i.e, the wobbler must move halfway through single sweep before sending new point cloud)
+        min_scan_callbacks = (max_ang - min_ang) / 2; 
+        
         scan_callback_count++;
         if(scan_callback_count > min_scan_callbacks)
         {
@@ -124,7 +126,6 @@ int main(int argc, char **argv)
     // Internal scanning/sweeping parameters
     bool scanning_upwards = true;
     bool been_awhile = false;
-    min_scan_callbacks = (max_ang - min_ang) / 2; // Require that the minimum number of scans be half the total expected number of scans (i.e, the wobbler must move halfway through single sweep before sending new point cloud)
     scan_callback_count = 0;
 
     ros::Subscriber my_subscriber_object = nh.subscribe("angle", 1, hokuyoMotorCallback);
