@@ -25,8 +25,6 @@ double min_scan_callbacks;
 double min_ang;
 double max_ang;
 
-std::string name;
-
 // Gets the angle of the current motor position
 void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
 {

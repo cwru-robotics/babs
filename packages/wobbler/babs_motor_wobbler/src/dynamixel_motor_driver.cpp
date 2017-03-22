@@ -10,7 +10,6 @@
 #define DEFAULT_BAUDNUM		1 // code "1" --> 1Mbps
 #define DEFAULT_ID		1 //this is the motor ID
 #define DEFAULT_TTY_NUM			0 // typically, 0 for /dev/ttyUSB0
-#define DEFAULT_MOTOR_COUNT 2 // We expect the sentry to have exactly two motors, one each for front and rear wobbler
 
 // Prevent C++ name mangling of Dynamixels C header and C source files that we want to use
 extern "C" { 
@@ -54,18 +53,6 @@ int main(int argc, char **argv)
   std::string dash_m = "-m";
   std::string dash_tty = "-tty";
   std::string dash_baud = "-baud";
-
-/* DUDE FUCK NAME MANGLING
-  char node_name[50];
-  char in_topic_name[50];
-  char out_topic_name[50];
-  sprintf(node_name,"motor%d",motor_id);
-  ROS_INFO("node name: %s",node_name);
-  sprintf(in_topic_name,"motor%d_cmd",motor_id);
-  ROS_INFO("input command topic: %s",in_topic_name);
-  sprintf(out_topic_name,"motor%d_ang",motor_id);
-  ROS_INFO("output topic: %s",out_topic_name);
-*/
 
   ros::init(argc,argv, "dynamixel_motor_driver"); //name this node 
 
@@ -158,13 +145,13 @@ int main(int argc, char **argv)
   int rear_motor_ang;
 
   ROS_INFO("Attempting communication with following motors:");
-  ROS_INFO("     @ motor_id %d at baudrate code %d",g_front_motor_id, motor_baud);
-  ROS_INFO("     @ motor_id %d at baudrate code %d",g_rear_motor_id, motor_baud);
+  ROS_INFO("  @ motor_id %d at baudrate code %d",g_front_motor_id, motor_baud);
+  ROS_INFO("  @ motor_id %d at baudrate code %d",g_rear_motor_id, motor_baud);
 
   // Main program loop to read motor positions from device and push them to ROS topics for each motor
   while(ros::ok()) 
   {
-    // For each of the motors that we have
+    // For each of the motors that we have...
 
     // Use Dynamixel library to read the particular motors current position and store it
     front_motor_ang = read_position(g_front_motor_id);
@@ -196,6 +183,5 @@ int main(int argc, char **argv)
    
   // Should not happen until ROS cuts out entirely
   dxl_terminate();
-  ROS_INFO("Goodbye!");
   return 0; 
 } 
