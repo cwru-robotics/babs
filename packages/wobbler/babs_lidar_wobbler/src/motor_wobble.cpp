@@ -17,7 +17,7 @@ void frontAngleCB(const std_msgs::Int16& angleHolder)
     ROS_INFO("frontAngleCB called, received angle value of = %d", g_current_wobbler_angle);
 }
 
-// Waits for GLOBALLY DEFINED BOOLEANS to become true for a set number of seconds that are triggered by specific ros topics
+// Waits for GLOBALLY DEFINED BOOLEAN to become true for a set number of seconds that are triggered by specific ros topics
 // Quick and dirty ROS-based initialization
 bool waitForSubs()
 {
@@ -26,8 +26,8 @@ bool waitForSubs()
     // NIMPL: ros::Subscriber rear_angle_sub = nh_ptr->subscribe("rear_wobbler/angle", 1, rearAngleCB);
 
     int count = 0;
-    int time_to_wait = 5;
-    ros::Rate count_rate(1);
+    int time_to_wait = 50;
+    ros::Rate count_rate(10);
 
     while(count < time_to_wait)
     {
@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
     ros::Publisher rear_motor_pub = nh.advertise<std_msgs::Int16>("rear_wobbler/cmd", 1);
 
     g_callback_received = false;
+
     // C++ variable for the commanded angle. This value goes "into" the ROS message object.
     short int command;
 
