@@ -16,7 +16,7 @@
     	-->
 	</node>
 
-	<!-- Start lidar_calibration node-->
+	<!-- Start lidar_calibration node under test -->
 
 	<node pkg= "lidar_calibration"  type="lidar_calibration" name= "lidar_calibration" output="screen"> 
 	</node>

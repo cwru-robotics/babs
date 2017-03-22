@@ -1,4 +1,4 @@
-// Trent Ziemer 2/8/17 for sentry wobbler
+// Trent Ziemer 2/8/17 for Sentry Wobbler
 // Based on basic given WSN Low-level C code for Dynamixel motor communication with ROS nodes
 
 #include<ros/ros.h> 
