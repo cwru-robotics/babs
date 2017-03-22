@@ -1,0 +1,16 @@
+<launch> 
+	<!-- ?
+	<node pkg= "babs_wobbler_tests" type="lidar_calibration_test" name= "lidar_calibration_test" output="screen" /> -->
+
+	<!-- Start node under test -->
+
+	<node pkg= "babs_lidar_wobbler"  type="motor_wobble" name= "motor_wobble" output="screen"> 
+	</node>
+
+	<!-- Rosbag input for data -->
+	<node pkg="rosbag" type="play" name="player" args="--clock /home/mordoc/wobbler_scans/quickarmscan.bag"/>
+
+	<remap from="/sensor_msgs/LaserScan" to="/sick_scan" />
+	<remap from="/wobbler_3d_cloud" to="/wobbler_sweep" />
+
+</launch>

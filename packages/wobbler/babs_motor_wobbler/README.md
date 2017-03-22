@@ -27,8 +27,6 @@ Output (motor angle) topics that this node subscribes to would then be:
 "front_wobbler/angle" and "rear_wobbler/angle"
 
 
-
-
 Final note: The main node also uses the three C libraries:
 "src/ReadWrite.c", "src/dynamixel.c", and "src/dxl_hal.c"
 
