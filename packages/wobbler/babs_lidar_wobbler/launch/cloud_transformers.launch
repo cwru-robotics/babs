@@ -1,7 +1,7 @@
 <launch> 
 	
 	<!-- Publishes point clouds transformed to the lidar_link frame from the front hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "wobbler_transformer" name= "front_wobbler_transformer" output="screen" >
+	<node pkg= "babs_lidar_wobbler" type= "wobbler_transformer" name= "front_wobbler_transformer" output="log" >
 
 		<param name="wobbler_laser_name" value="front_wobbler_laser" />
 
@@ -10,7 +10,7 @@
 	</node>
 
 	<!-- Publishes point clouds transformed to the lidar_link frame from the rear hokuyo LaserScans, using motor position. -->
-	<node pkg= "babs_lidar_wobbler" type= "wobbler_transformer" name= "rear_wobbler_transformer" output="screen" >
+	<node pkg= "babs_lidar_wobbler" type= "wobbler_transformer" name= "rear_wobbler_transformer" output="log" >
 
 		<param name="wobbler_laser_name" value="rear_wobbler_laser" />
 

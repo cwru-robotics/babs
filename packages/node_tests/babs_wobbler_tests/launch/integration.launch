@@ -1,16 +1,19 @@
 <launch> 
 
 	<!-- Start all the nodes that are to be under test -->
-	<include file="$(find babs_lidar_wobbler)/launch/start_wobbler.launch" />
+	<include file="$(find babs_lidar_wobbler)/launch/start_wobbler.launch" /> 
 
 	<!-- Start node that will test the wobbler nodes -->
-	<node pkg="babs_wobbler_tests" type="integration_test" name="integration_test" args="" output="screen" > 
+	<node pkg="babs_wobbler_tests" type="wobbler_integration_test" name="wobbler_integration_test" args="" output="screen" > 
 
+	<!-- Test params to test the test --> 
+
+	<param name="hokuyo_scan_name" value="/front_wobbler/scan" />
+	<param name="start_testing" value="1.00" />
 	</node>
 
 	<!-- TEMPLATE
 	<node pkg=" "  type=" " name=" " output="screen" > 
-
 	</node> -->
 
 </launch>

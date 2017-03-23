@@ -1,6 +1,6 @@
 <launch> 
 	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the front wobbler, based on motor angle. -->
-	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "front_hokuyo_pcl_stitcher" output="screen">
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "front_hokuyo_pcl_stitcher" output="log">
 
 		<remap from="scan_cloud" to="front_wobbler/scan_cloud"/>
 		<remap from="point_cloud" to="front_wobbler/point_cloud"/>
@@ -8,7 +8,7 @@
 	</node>
 
 	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the rear wobbler, based on motor angle. -->
-	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "rear_hokuyo_pcl_stitcher" output="screen">
+	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "rear_hokuyo_pcl_stitcher" output="log">
 
 		<remap from="scan_cloud" to="rear_wobbler/scan_cloud"/>
 		<remap from="point_cloud" to="rear_wobbler/point_cloud"/>

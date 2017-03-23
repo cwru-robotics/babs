@@ -1,6 +1,6 @@
 <launch> 
 	<!-- Static transform between lidar_link frame and front joint frame  -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" output="screen" >
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "front_wobbler_joint_static_tf" output="log" >
 
 		<!-- Parameters for the lidar frame transform   -->
 				
@@ -16,7 +16,7 @@
 	</node>
 
 	<!-- Static transform between lidar_link frame and rear joint frame  -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" output="screen" >
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "rear_wobbler_joint_static_tf" output="log" >
 
 		<!-- Parameters for the lidar frame transform   -->
 
@@ -32,7 +32,7 @@
 	</node>
 
 	<!-- Transform dependent on joint angle between joint and the front wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" output="screen" > 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "front_wobbler_laser_tf" output="log" > 
 
 		<param name="wobbler_joint_name" value="front_wobbler_joint" />
 		<param name="wobbler_laser_name" value="front_wobbler_laser" />
@@ -47,7 +47,7 @@
 
 
 	<!-- Transform dependent on joint angle between joint and the rear wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" output="screen" > 
+	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "rear_wobbler_laser_tf" output="log" > 
 
 		<param name="wobbler_joint_name" value="rear_wobbler_joint" />
 		<param name="wobbler_laser_name" value="rear_wobbler_laser" />

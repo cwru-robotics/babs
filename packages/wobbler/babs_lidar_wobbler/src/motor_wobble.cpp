@@ -100,6 +100,10 @@ int main(int argc, char **argv) {
             {
                 max_ang = 1000;  
             }
+            else
+            {
+                std::cout << "WEE WOO WEE WOO ERROR" << std::endl;
+            }
 
             if(!nh.getParam("wobble_speed", change_ang))
             {
