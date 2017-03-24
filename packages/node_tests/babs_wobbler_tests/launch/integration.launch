@@ -9,6 +9,8 @@
 	<!-- Test params to test the test --> 
 
 	<param name="hokuyo_scan_name" value="/front_wobbler/scan" />
+	<param name="transformed_scan_cloud_name" value="/front_wobbler/scan_cloud" />
+	<param name="stitched_cloud_name" value="/front_wobbler/point_cloud" />
 	<param name="start_testing" value="1.00" />
 	</node>
 
