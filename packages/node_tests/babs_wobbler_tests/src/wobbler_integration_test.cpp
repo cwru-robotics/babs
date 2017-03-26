@@ -37,7 +37,7 @@ SubscriptionVerifier::SubscriptionVerifier()
 
 void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 {
-	        ROS_INFO("IN SCAN CB");
+	        ROS_ERROR("IN SCAN CB");
 	scan_received = true;
     if(1)
     {
@@ -47,7 +47,7 @@ void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& sc
 
 void SubscriptionVerifier::verifyCloud(const PointCloud::ConstPtr& point_cloud)
 {
-	        ROS_INFO("IN CLOUD CB");
+	        ROS_ERROR("IN CLOUD CB");
 	cloud_received = true;
     if(1)
     {

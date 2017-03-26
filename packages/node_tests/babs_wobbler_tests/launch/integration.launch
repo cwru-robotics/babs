@@ -9,12 +9,12 @@
 	<!-- Start node that will test the wobbler nodes -->
 	<node pkg="babs_wobbler_tests" type="wobbler_integration_test" name="wobbler_integration_test" args="" output="screen" > 
 
-	<!-- Test params to test the test --> 
+		<!-- Test params to test the test --> 
 
-	<param name="hokuyo_scan_name" value="/front_wobbler/scan" />
-	<param name="transformed_scan_cloud_name" value="/front_wobbler/scan_cloud" />
-	<param name="stitched_cloud_name" value="/front_wobbler/point_cloud" />
-	<param name="start_testing" value="1.00" />
+		<param name="hokuyo_scan_name" value="/front_wobbler/scan" />
+		<param name="transformed_scan_cloud_name" value="/front_wobbler/scan_cloud" />
+		<param name="stitched_cloud_name" value="/front_wobbler/point_cloud" />
+		<param name="start_testing" value="1.00" />
 
 	</node>
 

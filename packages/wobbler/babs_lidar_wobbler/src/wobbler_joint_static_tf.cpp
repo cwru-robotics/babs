@@ -22,7 +22,7 @@ void poseCallback(const std_msgs::Int16& msg){
 	tf::Quaternion q;
 
 	motorEncodedAngle = msg.data;
-	ROS_ERROR("HERE TRENT!");
+
 	// Get transform parameters from server.
 	double dist_to_joint_x;
 	if(!node_ptr->getParam("dist_to_joint_x", dist_to_joint_x))
@@ -43,6 +43,7 @@ void poseCallback(const std_msgs::Int16& msg){
 	{
 		// "Good guess" values if we can't find a stored param.
 		dist_to_joint_z = 0.6;
+		// TO DO: This needs attention, probs
 		ROS_WARN("A FAILURE");
 	}
 	else
