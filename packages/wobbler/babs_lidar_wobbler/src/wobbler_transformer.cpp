@@ -140,6 +140,7 @@ int main(int argc, char** argv) {
     while (tferr) {
         tferr = false;
         try {
+            ROS_INFO("wobbler_transformer.......!!!!");
             g_listener_ptr->lookupTransform("lidar_link", wobbler_laser_name, ros::Time(0), stfLidar2World);
         } catch (tf::TransformException &exception) {
 

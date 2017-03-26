@@ -43,7 +43,7 @@ void poseCallback(const std_msgs::Int16& msg){
     }
 
 	q.setRPY(0, (motorEncodedAngle*factor + 1024)/1303.8/factor2, 0);
-	
+
 	transform.setRotation(q);
 	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), wobbler_joint_name, wobbler_laser_name));
 	ROS_INFO("SENT %s to %s FRAME TRANSFORM.", wobbler_joint_name.c_str(), wobbler_laser_name.c_str());
