@@ -1,0 +1,8 @@
+<launch> 
+	<!-- Start Hokuyo LIDAR wobbler data collection for front and rear wobblers over USB (ACM) line-->
+	<!-- Hokuyo driver -->
+	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "front_hokuyo_driver" args="_port:=/dev/ttyACM0" > 
+		<remap from="scan" to="front_wobbler/scan"/>
+	</node>
+
+</launch>

@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh; // Can make "...("~");" if needed.
     nh_ptr = &nh;
 
-    g_motor_angle_topic_name = "dynamixel_motor1_ang"; // CHANGE THIS TO "front_wobbler/angle" for use with final, physical system. Currently configured for an old ROSbag
+    g_motor_angle_topic_name = "front_wobbler/angle"; // CHANGE THIS TO "front_wobbler/angle" for use with final, physical system. Currently configured for an old ROSbag. dynamixel_motor1_ang
     
     ros::Publisher front_motor_pub = nh.advertise<std_msgs::Int16>("front_wobbler/cmd", 1);
     ros::Publisher rear_motor_pub = nh.advertise<std_msgs::Int16>("rear_wobbler/cmd", 1);

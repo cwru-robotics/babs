@@ -46,7 +46,7 @@ void poseCallback(const std_msgs::Int16& msg){
 
 	transform.setRotation(q);
 	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), wobbler_joint_name, wobbler_laser_name));
-	ROS_INFO("SENT %s to %s FRAME TRANSFORM.", wobbler_joint_name.c_str(), wobbler_laser_name.c_str());
+	//ROS_INFO("SENT %s to %s FRAME TRANSFORM.", wobbler_joint_name.c_str(), wobbler_laser_name.c_str());
 }
 
 int main(int argc, char** argv){

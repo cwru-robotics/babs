@@ -39,7 +39,7 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
 
         // Get the most updated value of the wobbler's min/max wobbling angle. The angle can change in the middle of operation.
 
-        if(!nh_ptr->getParam("min_ang", min_ang))
+        if(!nh_ptr->getParam("/motor_wobble/min_ang", min_ang))
         {
             ROS_WARN("FAILED TO GET WOBBLER MIN ANG IN CALLBACK");
         }
@@ -48,7 +48,7 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
             ROS_INFO("SUCCEEDED TO GET WOBBLER MIN ANG IN CALLBACK");
         }
 
-        if(!nh_ptr->getParam("max_ang", max_ang))
+        if(!nh_ptr->getParam("/motor_wobble/max_ang", max_ang))
         {
             ROS_WARN("FAILED TO GET WOBBLER MAX ANG IN CALLBACK");
         }
