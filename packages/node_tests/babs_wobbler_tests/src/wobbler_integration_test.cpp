@@ -31,15 +31,16 @@ SubscriptionVerifier::SubscriptionVerifier()
     time_to_wait = 3000; // milliseconds
     scan_verified = false;
     cloud_verified = false;
+    // Currently unused, below
     scan_received = false;
     cloud_received = false;
 }
 
 void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 {
-	        ROS_ERROR("IN SCAN CB");
 	scan_received = true;
-    if(1)
+	// Check that the scan size is non zero to verify that we received something properly formed
+    if((scan_in->ranges).size() > 0)
     {
         scan_verified = true;
     }
@@ -47,12 +48,11 @@ void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& sc
 
 void SubscriptionVerifier::verifyCloud(const PointCloud::ConstPtr& point_cloud)
 {
-	        ROS_ERROR("IN CLOUD CB");
 	cloud_received = true;
-    if(1)
+	// Check that the point cloud is non zero to verify that we received something properly formed
+    if((point_cloud->height * point_cloud->width) > 0)
     {
-
-        cloud_verified = true;
+    	cloud_verified = true;
     }
 }
 
@@ -64,7 +64,6 @@ bool SubscriptionVerifier::checkSubscription()
     {
         if(scan_verified || cloud_verified)
         {
-            ROS_INFO("SCAN || CLOUD VERIFIED WAS INDEED TRUE");
             return true;
         }
         ros::spinOnce();
@@ -73,15 +72,6 @@ bool SubscriptionVerifier::checkSubscription()
     }
     return false;
 }
-
-/*
-
-// Test Proc?
-void runTest(std::string node_name)
-{
-}
-
-*/
 
 int main(int argc, char** argv) 
 {
@@ -96,7 +86,7 @@ int main(int argc, char** argv)
     ros::NodeHandle nh;
     nh_ptr = &nh;
 
-    // Keep track of how many tests we run, and how many are successful
+    // Keep track of how many tests fail, out of the total number of tests ran
     int tests_failed = 0;
     int total_tests = 0;
 
@@ -114,16 +104,18 @@ int main(int argc, char** argv)
     // Set what tests we want to run
     bool test_hokuyo = true;
     bool test_wobbler_transformer = true;
+    bool test_stitchers = true;
+
 
     // Move into formal testing procedure
-    ROS_INFO("Starting testing data and point cloud stack");
+    ROS_INFO("Starting testing data and point cloud stack!");
     ROS_INFO("Testing hokuyo_node...");
 
     if(test_hokuyo == true)
     {
         total_tests++;
         std::string hokuyo_scan_name;
-        if(!nh_ptr->getParam("/wobbler_integration_test/hokuyo_scan_name", hokuyo_scan_name))
+        if(!nh_ptr->getParam("/wobbler_integration_test/front_hokuyo_scan_name", hokuyo_scan_name))
         {
         	tests_failed++;
             ROS_WARN("TEST FAILED: Could not verify wobbler hokuyo scan topic name parameter!");
@@ -139,7 +131,7 @@ int main(int argc, char** argv)
             if(!hokuyoVerifier.checkSubscription())
             {
             	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify correct hokuyo data!");
+                ROS_WARN("TEST FAILED: Could not verify valid hokuyo data!");
             }
         }     
     }
@@ -149,7 +141,7 @@ int main(int argc, char** argv)
     {
         total_tests++;
         std::string transformed_scan_cloud_name;
-        if(!nh_ptr->getParam("/wobbler_integration_test/transformed_scan_cloud_name", transformed_scan_cloud_name))
+        if(!nh_ptr->getParam("/wobbler_integration_test/front_transformed_scan_cloud_name", transformed_scan_cloud_name))
         {
         	tests_failed++;
             ROS_WARN("TEST FAILED: Could not get wobbler transformer scan cloud topic name parameter!");
@@ -159,19 +151,39 @@ int main(int argc, char** argv)
             total_tests++;
             SubscriptionVerifier transformerVerifier;
 
-            ros::Subscriber hokuyo_sub = nh_ptr->subscribe(transformed_scan_cloud_name, 1, &SubscriptionVerifier::verifyScan, &transformerVerifier);
+            ros::Subscriber transformer_sub = nh_ptr->subscribe(transformed_scan_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &transformerVerifier);
 
             if(!transformerVerifier.checkSubscription())
             {
             	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify correct wobbler transformer data!");
+                ROS_WARN("TEST FAILED: Could not verify valid wobbler transformer data!");
             }
         }     
     }
 
-    if(test_hokuyo == true)
+    ROS_INFO("Testing pcl stitchers...");
+    if(test_stitchers == true)
     {
-        //runTest(...);
+        total_tests++;
+        std::string stitched_cloud_name;
+        if(!nh_ptr->getParam("/wobbler_integration_test/front_stitched_cloud_name", stitched_cloud_name))
+        {
+        	tests_failed++;
+            ROS_WARN("TEST FAILED: Could not get stitchers point cloud topic name parameter!");
+        }
+        else
+        {
+            total_tests++;
+            SubscriptionVerifier stitcherVerifier;
+
+            ros::Subscriber stitcher_sub = nh_ptr->subscribe(stitched_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &stitcherVerifier);
+
+            if(!stitcherVerifier.checkSubscription())
+            {
+            	tests_failed++;
+                ROS_WARN("TEST FAILED: Could not verify valid pcl stitcher data!");
+            }
+        }     
     }
 
 	if(tests_failed == 0)
