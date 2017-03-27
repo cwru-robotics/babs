@@ -93,12 +93,12 @@ int main(int argc, char **argv) {
             // Check if controller parameters are available. If not, choose some defaults
             if(!nh.getParam("min_ang", min_ang))
             {
-                min_ang = 500;
+                min_ang = 600;
             }
 
             if(!nh.getParam("max_ang", max_ang))
             {
-                max_ang = 1000;  
+                max_ang = 1500;  
             }
             else
             {
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 
             if(!nh.getParam("wobble_speed", change_ang))
             {
-                change_ang = 2;
+                change_ang = 1;
             }
         }
 
