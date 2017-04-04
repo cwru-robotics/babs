@@ -12,7 +12,7 @@
 		<param name="rot_to_joint_p" value="0.0" />
 		<param name="rot_to_joint_y" value="3.14159265359" />
 
-		<remap from="/front_wobbler_joint_static_tf/angle" to="front_wobbler/angle"/>
+		<remap from="/front_wobbler_joint_static_tf/angle" to="/front_wobbler/angle"/>
 	</node>
 
 	<!-- Static transform between lidar_link frame and rear joint frame  -->
@@ -57,6 +57,6 @@
 		<param name="factor" value="1" />
 		<param name="factor2" value="0.5" />
 
-		<remap from="/front_wobbler_laser_tf/angle" to="/rear_wobbler/angle"/>
+		<remap from="/rear_wobbler_laser_tf/angle" to="/rear_wobbler/angle"/>
 	</node>
 </launch>

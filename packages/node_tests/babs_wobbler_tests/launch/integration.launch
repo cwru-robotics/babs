@@ -25,14 +25,14 @@
 
 	<!-- USE THIS IF SIMULATING (IE NOT USING PHYSICAL HARDWARE) -->
 	<!-- Start point cloud rosbag play to take place of input data stream for front wobbler -->
-	<node pkg="rosbag" type="play" name="rosbag_front_wobbler_data" args="/home/mordoc/wobbler_scans/wobbler_data.bag" respawn="true"  output="log" >\
+	<node pkg="rosbag" type="play" name="rosbag_front_wobbler_data" args="/home/mordoc/rosbags/wobbler_scans/wobbler_data.bag" respawn="true"  output="log" >\
 		<remap from="/scan" to="/front_wobbler/scan"/>
 		<remap from="/dynamixel_motor1_ang" to="/front_wobbler/angle"/>
 	</node>
 
 	<!-- USE THIS IF SIMULATING (IE NOT USING PHYSICAL HARDWARE) -->
 	<!-- Start point cloud rosbag play to take place of input data stream for rear wobbler. Using same data for front and rear wobbler because idgaf -->
-	<node pkg="rosbag" type="play" name="rosbag_rear_wobbler_data" args="/home/mordoc/wobbler_scans/wobbler_data.bag" respawn="true"  output="log" >\
+	<node pkg="rosbag" type="play" name="rosbag_rear_wobbler_data" args="/home/mordoc/rosbags/wobbler_scans/wobbler_data.bag" respawn="true"  output="log" >\
 		<remap from="/scan" to="/rear_wobbler/scan"/>
 		<remap from="/dynamixel_motor1_ang" to="/rear_wobbler/angle"/>
 	</node>
