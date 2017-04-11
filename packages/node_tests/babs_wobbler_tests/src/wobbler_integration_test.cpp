@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <pcl_ros/point_cloud.h>
+#include <std_msgs/Int16.h>
 
 typedef pcl::PointXYZ Point;
 typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
@@ -14,26 +15,43 @@ ros::NodeHandle * nh_ptr;
 class SubscriptionVerifier
 {
 public:
-    SubscriptionVerifier();
+    SubscriptionVerifier(std::string);
     void verifyScan(const sensor_msgs::LaserScan::ConstPtr&);
     void verifyCloud(const PointCloud::ConstPtr&);
+    void verifyInt16(const std_msgs::Int16&);
+
     bool checkSubscription();
+    std::string topic_name;
+    std::string param_name;
+
+	int tests_ran;
+	int tests_failed;
+
 private:
     int time_to_wait;
-    bool scan_verified;
-    bool cloud_verified;
     bool scan_received;
     bool cloud_received;
+    bool int_received;
+    // Below are currently unused
+    bool scan_verified;
+    bool cloud_verified;
+    bool int_verified;
 };
 
-SubscriptionVerifier::SubscriptionVerifier()
+SubscriptionVerifier::SubscriptionVerifier(std::string name)
 {
+	param_name = name;
     time_to_wait = 2000; // milliseconds
     scan_verified = false;
     cloud_verified = false;
-    // Currently unused, below
+    int_verified = false;
+    // Below are currently unused
     scan_received = false;
     cloud_received = false;
+    int_received = false;
+
+    tests_ran = 0;
+    tests_failed = 0;
 }
 
 void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& scan_in)
@@ -56,6 +74,38 @@ void SubscriptionVerifier::verifyCloud(const PointCloud::ConstPtr& point_cloud)
     }
 }
 
+void SubscriptionVerifier::verifyInt16(const std_msgs::Int16& integer) 
+{
+	int_received = true;
+	// Check that the integer is in the range we expected
+    if(integer > 300 && integer < 1500)
+    {
+        int_verified = true;
+    }
+}
+
+void SubscriptionVerifier::test()
+{
+   	tests_ran++;
+    if(!nh_ptr->getParam(param_name, topic_name))
+    {
+    	tests_failed++;
+        ROS_WARN("TEST FAILED: Could not get front stitchers point cloud topic name parameter!");
+    }
+    else
+    {
+        tests_ran++;
+
+        ros::Subscriber stitcher_sub = nh_ptr->subscribe(stitched_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &stitcherVerifier);
+
+        if(!stitcherVerifier.checkSubscription())
+        {
+        	tests_failed++;
+            ROS_WARN("TEST FAILED: Could not verify valid front pcl stitcher data!");
+        }
+    } 
+}
+
 bool SubscriptionVerifier::checkSubscription()
 {
     int count = 0;
@@ -70,6 +120,11 @@ bool SubscriptionVerifier::checkSubscription()
         else if (cloud_verified)
         {
         	cloud_verified = false;
+        	return true;
+        }
+        else if(int_verified)
+        {
+        	int_verified = false;
         	return true;
         }
         ros::spinOnce();
@@ -87,7 +142,6 @@ int main(int argc, char** argv)
     //    MOTOR STACK
     //    (and then all three, or maybe superfluous)
 
-    // Standard ROS stuff
     ros::init(argc, argv, "wobbler_integration_test");
     ros::NodeHandle nh;
     nh_ptr = &nh;
@@ -98,7 +152,7 @@ int main(int argc, char** argv)
 
     double dummy;
 
-    // Wait for us to get the OK to start testing from the param server
+    // Wait for us to get the OK to start running tests from the param server
     while(ros::ok())
     {
         if(nh_ptr->getParam("/wobbler_integration_test/start_testing", dummy))
@@ -112,6 +166,7 @@ int main(int argc, char** argv)
     bool test_wobbler_transformer = true;
     bool test_stitchers = true;
 
+    bool test_motors;
 
     // Move into formal testing procedure
     ROS_INFO("Starting testing data and point cloud stack!");
@@ -122,7 +177,7 @@ int main(int argc, char** argv)
     	// Front
         total_tests++;
         std::string hokuyo_scan_name;
-        SubscriptionVerifier hokuyoVerifier;
+        SubscriptionVerifier hokuyoVerifier("/wobbler_integration_test/front_hokuyo_scan_name");
         if(!nh_ptr->getParam("/wobbler_integration_test/front_hokuyo_scan_name", hokuyo_scan_name))
         {
         	tests_failed++;
@@ -249,7 +304,14 @@ int main(int argc, char** argv)
             	tests_failed++;
                 ROS_WARN("TEST FAILED: Could not verify valid rear pcl stitcher data!");
             }
-        } 
+        }
+    }
+
+    if(test_motors == true)
+    {
+    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name");
+    	total_tests += motorVerifier.tests_ran;
+    	tests_failed += motorVerifier.tests_failed;
     }
 
 	if(tests_failed == 0)
