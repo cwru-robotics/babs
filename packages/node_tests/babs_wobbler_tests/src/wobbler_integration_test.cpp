@@ -12,24 +12,32 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 ros::NodeHandle * nh_ptr;
 
+// An object that will check if a given topic name with a given type is posting data validly
 class SubscriptionVerifier
 {
 public:
+	// Initialize data to default values
     SubscriptionVerifier(std::string, std::string);
+
+    // These three functions are the callbacks called on topic reception
     void verifyScan(const sensor_msgs::LaserScan::ConstPtr&);
     void verifyCloud(const PointCloud::ConstPtr&);
     void verifyInt16(const std_msgs::Int16&);
+
+    // Run this when you're ready to subscribe and wait and validate (any of) the topics given
     void test();
 
-    bool checkSubscription();
     std::string topic_name;
     std::string param_name;
 
+    // The count for each test, to report to user
 	int tests_ran;
 	int tests_failed;
 
 private:
+	// How long to wait before reporting test failure for topic reception
     int time_to_wait;
+    // Success or failure of each topic reception
     bool scan_received;
     bool cloud_received;
     bool int_received;
@@ -38,6 +46,10 @@ private:
     bool cloud_verified;
     bool int_verified;
 
+    // Generic subscription helper function
+    bool checkSubscription();
+
+    // The code name for what verifier to use
     std::string verifier_name;
 };
 
@@ -90,6 +102,7 @@ void SubscriptionVerifier::verifyInt16(const std_msgs::Int16& integer)
     }
 }
 
+// Call then to actually start the verifier test, assuming proper initialization has happened
 void SubscriptionVerifier::test()
 {
    	tests_ran++;
@@ -120,6 +133,7 @@ void SubscriptionVerifier::test()
 			ROS_WARN("VERIFIER NAME MATCHED NO EXISTING CALLBACK VERIFIER TYPES");
 		}
 
+		// Wait for the subscription to come through (any of them)
         if(!checkSubscription())
         {
         	tests_failed++;
@@ -128,6 +142,7 @@ void SubscriptionVerifier::test()
     } 
 }
 
+// Generic helper function for hacky subscription checking
 bool SubscriptionVerifier::checkSubscription()
 {
     int count = 0;
@@ -158,12 +173,6 @@ bool SubscriptionVerifier::checkSubscription()
 
 int main(int argc, char** argv) 
 {
-    // CHECK THREE THINGS
-    //    DATA STACK
-    //    TRANSFORM STACK
-    //    MOTOR STACK
-    //    (and then all three, or maybe superfluous)
-
     ros::init(argc, argv, "wobbler_integration_test");
     ros::NodeHandle nh;
     nh_ptr = &nh;
@@ -192,7 +201,6 @@ int main(int argc, char** argv)
 
     // Move into formal testing procedure
     ROS_INFO("Starting testing data and point cloud stack!");
-
 
     if(test_hokuyo == true)
     {

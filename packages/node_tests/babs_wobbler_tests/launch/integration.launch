@@ -41,6 +41,8 @@
 		<remap from="/dynamixel_motor1_ang" to="/rear_wobbler/angle"/>
 	</node>
 
+	<!-- NOTE: These topics are blank if not added as above, because Hokuyo nodes will fail and not post topics if there is no hardware to attach to. -->
+
 	<!-- TEMPLATE
 	<node pkg=" "  type=" " name=" " output=" " > 
 	</node> -->
