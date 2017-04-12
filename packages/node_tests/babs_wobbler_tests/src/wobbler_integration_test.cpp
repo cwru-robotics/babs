@@ -15,10 +15,11 @@ ros::NodeHandle * nh_ptr;
 class SubscriptionVerifier
 {
 public:
-    SubscriptionVerifier(std::string);
+    SubscriptionVerifier(std::string, std::string);
     void verifyScan(const sensor_msgs::LaserScan::ConstPtr&);
     void verifyCloud(const PointCloud::ConstPtr&);
     void verifyInt16(const std_msgs::Int16&);
+    void test();
 
     bool checkSubscription();
     std::string topic_name;
@@ -36,9 +37,11 @@ private:
     bool scan_verified;
     bool cloud_verified;
     bool int_verified;
+
+    std::string verifier_name;
 };
 
-SubscriptionVerifier::SubscriptionVerifier(std::string name)
+SubscriptionVerifier::SubscriptionVerifier(std::string name, std::string callback_name)
 {
 	param_name = name;
     time_to_wait = 2000; // milliseconds
@@ -52,6 +55,7 @@ SubscriptionVerifier::SubscriptionVerifier(std::string name)
 
     tests_ran = 0;
     tests_failed = 0;
+    verifier_name = callback_name;
 }
 
 void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& scan_in)
@@ -78,8 +82,10 @@ void SubscriptionVerifier::verifyInt16(const std_msgs::Int16& integer)
 {
 	int_received = true;
 	// Check that the integer is in the range we expected
-    if(integer > 300 && integer < 1500)
+	ROS_INFO("RECEIVED VERIFY INT 16 CB");
+    if(integer.data > 300 && integer.data < 1500)
     {
+    	ROS_INFO("INT VERIFIED 16 IS  s TRUE");
         int_verified = true;
     }
 }
@@ -96,9 +102,25 @@ void SubscriptionVerifier::test()
     {
         tests_ran++;
 
-        ros::Subscriber stitcher_sub = nh_ptr->subscribe(stitched_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &stitcherVerifier);
+        // This is SO bad. new w/ no delete afterwards.
+		if(verifier_name == "int16")
+		{
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyInt16, this));
+		}
+		else if (verifier_name == "scan")
+		{
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyInt16, this));
+		}
+		else if (verifier_name == "cloud")
+		{
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyInt16, this));
+		}
+		else
+		{
+			ROS_WARN("VERIFIER NAME MATCHED NO EXISTING CALLBACK VERIFIER TYPES");
+		}
 
-        if(!stitcherVerifier.checkSubscription())
+        if(!checkSubscription())
         {
         	tests_failed++;
             ROS_WARN("TEST FAILED: Could not verify valid front pcl stitcher data!");
@@ -166,12 +188,13 @@ int main(int argc, char** argv)
     bool test_wobbler_transformer = true;
     bool test_stitchers = true;
 
-    bool test_motors;
+    bool test_motors = true;
 
     // Move into formal testing procedure
     ROS_INFO("Starting testing data and point cloud stack!");
-    ROS_INFO("Testing hokuyo_node...");
 
+/*
+    ROS_INFO("Testing hokuyo_node...");
     if(test_hokuyo == true)
     {
     	// Front
@@ -306,10 +329,36 @@ int main(int argc, char** argv)
             }
         }
     }
+    */
 
     if(test_motors == true)
     {
-    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name");
+    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
+    	motorVerifier.test();
+    	total_tests += motorVerifier.tests_ran;
+    	tests_failed += motorVerifier.tests_failed;
+    }
+
+        if(test_motors == true)
+    {
+    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
+    	motorVerifier.test();
+    	total_tests += motorVerifier.tests_ran;
+    	tests_failed += motorVerifier.tests_failed;
+    }
+
+        if(test_motors == true)
+    {
+    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
+    	motorVerifier.test();
+    	total_tests += motorVerifier.tests_ran;
+    	tests_failed += motorVerifier.tests_failed;
+    }
+
+        if(test_motors == true)
+    {
+    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
+    	motorVerifier.test();
     	total_tests += motorVerifier.tests_ran;
     	tests_failed += motorVerifier.tests_failed;
     }
