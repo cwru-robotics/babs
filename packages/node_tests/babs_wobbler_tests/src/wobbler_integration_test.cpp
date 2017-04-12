@@ -82,10 +82,10 @@ void SubscriptionVerifier::verifyInt16(const std_msgs::Int16& integer)
 {
 	int_received = true;
 	// Check that the integer is in the range we expected
-	ROS_INFO("RECEIVED VERIFY INT 16 CB");
+	//ROS_INFO("RECEIVED VERIFY INT 16 CB");
     if(integer.data > 300 && integer.data < 1500)
     {
-    	ROS_INFO("INT VERIFIED 16 IS  s TRUE");
+    	//ROS_INFO("INT VERIFIED 16 IS  s TRUE");
         int_verified = true;
     }
 }
@@ -109,11 +109,11 @@ void SubscriptionVerifier::test()
 		}
 		else if (verifier_name == "scan")
 		{
-			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyInt16, this));
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyScan, this));
 		}
 		else if (verifier_name == "cloud")
 		{
-			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyInt16, this));
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyScan, this));
 		}
 		else
 		{
@@ -123,7 +123,7 @@ void SubscriptionVerifier::test()
         if(!checkSubscription())
         {
         	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not verify valid front pcl stitcher data!");
+            ROS_WARN("TEST FAILED: Could not verify %s as a posting topic!", topic_name.c_str());
         }
     } 
 }
@@ -193,174 +193,72 @@ int main(int argc, char** argv)
     // Move into formal testing procedure
     ROS_INFO("Starting testing data and point cloud stack!");
 
-/*
-    ROS_INFO("Testing hokuyo_node...");
+
     if(test_hokuyo == true)
     {
-    	// Front
-        total_tests++;
-        std::string hokuyo_scan_name;
-        SubscriptionVerifier hokuyoVerifier("/wobbler_integration_test/front_hokuyo_scan_name");
-        if(!nh_ptr->getParam("/wobbler_integration_test/front_hokuyo_scan_name", hokuyo_scan_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not verify front wobbler hokuyo scan topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
+        ROS_INFO("Testing hokuyo_node...");
+    	SubscriptionVerifier verifier1("/wobbler_integration_test/front_hokuyo_scan_name", "scan");
+    	verifier1.test();
+    	total_tests += verifier1.tests_ran;
+    	tests_failed += verifier1.tests_failed;
 
-            ros::Subscriber hokuyo_sub = nh_ptr->subscribe(hokuyo_scan_name, 1, &SubscriptionVerifier::verifyScan, &hokuyoVerifier);
-
-            if(!hokuyoVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid front hokuyo data!");
-            }
-        }
-
-        // Rear  
-        total_tests++;
-        if(!nh_ptr->getParam("/wobbler_integration_test/rear_hokuyo_scan_name", hokuyo_scan_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not verify rear wobbler hokuyo scan topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
-
-            ros::Subscriber hokuyo_sub = nh_ptr->subscribe(hokuyo_scan_name, 1, &SubscriptionVerifier::verifyScan, &hokuyoVerifier);
-
-            if(!hokuyoVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid rear hokuyo data!");
-            }
-        }  
+    	SubscriptionVerifier verifier2("/wobbler_integration_test/rear_hokuyo_scan_name", "scan");
+    	verifier2.test();
+    	total_tests += verifier2.tests_ran;
+    	tests_failed += verifier2.tests_failed;
     }
 
-    ROS_INFO("Testing wobbler transformers...");
     if(test_wobbler_transformer == true)
     {
-    	// Front
-        total_tests++;
-        std::string transformed_scan_cloud_name;
-        SubscriptionVerifier transformerVerifier;
-        if(!nh_ptr->getParam("/wobbler_integration_test/front_transformed_scan_cloud_name", transformed_scan_cloud_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not get front wobbler transformer scan cloud topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
+    	ROS_INFO("Testing wobbler transformers...");
+    	SubscriptionVerifier verifier1("/wobbler_integration_test/front_transformed_scan_cloud_name", "cloud");
+    	verifier1.test();
+    	total_tests += verifier1.tests_ran;
+    	tests_failed += verifier1.tests_failed;
 
-            ros::Subscriber transformer_sub = nh_ptr->subscribe(transformed_scan_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &transformerVerifier);
-
-            if(!transformerVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid front wobbler transformer data!");
-            }
-        }     
-
-        // Rear
-        if(!nh_ptr->getParam("/wobbler_integration_test/rear_transformed_scan_cloud_name", transformed_scan_cloud_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not get rear wobbler transformer scan cloud topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
-
-            ros::Subscriber transformer_sub = nh_ptr->subscribe(transformed_scan_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &transformerVerifier);
-
-            if(!transformerVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid rear wobbler transformer data!");
-            }
-        } 
+    	SubscriptionVerifier verifier2("/wobbler_integration_test/rear_transformed_scan_cloud_name", "cloud");
+    	verifier2.test();
+    	total_tests += verifier2.tests_ran;
+    	tests_failed += verifier2.tests_failed;
     }
-
-    ROS_INFO("Testing pcl stitchers...");
+    
+    
     if(test_stitchers == true)
     {
-    	// Front
-        total_tests++;
-        std::string stitched_cloud_name;
-        SubscriptionVerifier stitcherVerifier;
-        if(!nh_ptr->getParam("/wobbler_integration_test/front_stitched_cloud_name", stitched_cloud_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not get front stitchers point cloud topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
+    	ROS_INFO("Testing pcl stitchers...");
+    	SubscriptionVerifier verifier1("/wobbler_integration_test/front_stitched_cloud_name", "cloud");
+    	verifier1.test();
+    	total_tests += verifier1.tests_ran;
+    	tests_failed += verifier1.tests_failed;
 
-            ros::Subscriber stitcher_sub = nh_ptr->subscribe(stitched_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &stitcherVerifier);
-
-            if(!stitcherVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid front pcl stitcher data!");
-            }
-        } 
-
-        // Rear    
-        if(!nh_ptr->getParam("/wobbler_integration_test/rear_stitched_cloud_name", stitched_cloud_name))
-        {
-        	tests_failed++;
-            ROS_WARN("TEST FAILED: Could not get rear stitchers point cloud topic name parameter!");
-        }
-        else
-        {
-            total_tests++;
-
-            ros::Subscriber stitcher_sub = nh_ptr->subscribe(stitched_cloud_name, 1, &SubscriptionVerifier::verifyCloud, &stitcherVerifier);
-
-            if(!stitcherVerifier.checkSubscription())
-            {
-            	tests_failed++;
-                ROS_WARN("TEST FAILED: Could not verify valid rear pcl stitcher data!");
-            }
-        }
+    	SubscriptionVerifier verifier2("/wobbler_integration_test/rear_stitched_cloud_name", "cloud");
+    	verifier2.test();
+    	total_tests += verifier2.tests_ran;
+    	tests_failed += verifier2.tests_failed;
     }
-    */
 
     if(test_motors == true)
     {
-    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
-    	motorVerifier.test();
-    	total_tests += motorVerifier.tests_ran;
-    	tests_failed += motorVerifier.tests_failed;
-    }
+    	ROS_INFO("Testing dynamixel motor cmd and angle topics...");
+    	SubscriptionVerifier verifier1("/wobbler_integration_test/front_motor_angle_name", "int16");
+    	verifier1.test();
+    	total_tests += verifier1.tests_ran;
+    	tests_failed += verifier1.tests_failed;
 
-        if(test_motors == true)
-    {
-    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
-    	motorVerifier.test();
-    	total_tests += motorVerifier.tests_ran;
-    	tests_failed += motorVerifier.tests_failed;
-    }
+    	SubscriptionVerifier verifier2("/wobbler_integration_test/rear_motor_angle_name", "int16");
+    	verifier2.test();
+    	total_tests += verifier2.tests_ran;
+    	tests_failed += verifier2.tests_failed;
 
-        if(test_motors == true)
-    {
-    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
-    	motorVerifier.test();
-    	total_tests += motorVerifier.tests_ran;
-    	tests_failed += motorVerifier.tests_failed;
-    }
+    	SubscriptionVerifier verifier3("/wobbler_integration_test/front_motor_command_name", "int16");
+    	verifier3.test();
+    	total_tests += verifier3.tests_ran;
+    	tests_failed += verifier3.tests_failed;
 
-        if(test_motors == true)
-    {
-    	SubscriptionVerifier motorVerifier("/wobbler_integration_test/front_motor_angle_name", "int16");
-    	motorVerifier.test();
-    	total_tests += motorVerifier.tests_ran;
-    	tests_failed += motorVerifier.tests_failed;
+    	SubscriptionVerifier verifier4("/wobbler_integration_test/rear_motor_command_name", "int16");
+    	verifier4.test();
+    	total_tests += verifier4.tests_ran;
+    	tests_failed += verifier4.tests_failed;
     }
 
 	if(tests_failed == 0)
