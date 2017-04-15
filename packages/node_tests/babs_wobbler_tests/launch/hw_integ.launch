@@ -1,10 +1,12 @@
 <launch> 
 
+	<!-- Tests the wobbler stack when used with physical hardware (notably, the roboteq based odometry frames and the Hokuyo and dynamixel data sources) -->
+
 	<!-- Start all the nodes that are to be under test -->
 	<include file="$(find babs_lidar_wobbler)/launch/start_wobbler.launch" /> 
 
 	<!-- Start all the nodes that support simulation of the system -->
-	<include file="$(find babs_nav)/launch/init_sim.launch"/> 
+	<include file="$(find babs_nav)/launch/init_hw.launch"/> 
 
 	<!-- Start node that will test the wobbler nodes -->
 	<node pkg="babs_wobbler_tests" type="wobbler_integration_test" name="wobbler_integration_test" args="" output="screen" > 

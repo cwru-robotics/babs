@@ -1,5 +1,7 @@
 <launch> 
 
+	<!-- Tests the wobbler stack when used within a simulation (no hardware available). Uses rosbags to simulate frames, Hokuyo, and Dynamixel data -->
+
 	<!-- Start all the nodes that are to be under test -->
 	<include file="$(find babs_lidar_wobbler)/launch/start_wobbler.launch" /> 
 

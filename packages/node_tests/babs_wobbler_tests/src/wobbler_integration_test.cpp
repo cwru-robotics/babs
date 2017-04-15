@@ -126,7 +126,7 @@ void SubscriptionVerifier::test()
 		}
 		else if (verifier_name == "cloud")
 		{
-			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyScan, this));
+			ros::Subscriber * subscription_ptr = new ros::Subscriber(nh_ptr->subscribe(topic_name, 1, &SubscriptionVerifier::verifyCloud, this));
 		}
 		else
 		{
