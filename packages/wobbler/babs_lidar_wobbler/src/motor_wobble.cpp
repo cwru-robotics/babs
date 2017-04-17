@@ -53,7 +53,25 @@ int main(int argc, char **argv) {
 
     g_callback_received = false;
 
-    // C++ variable for the commanded angle. This value goes "into" the ROS message object.
+    // The lowest and highest angles to go to
+    int min_ang;
+    int max_ang;
+
+    // THIS IS INITIAL ONE FOR HACKY INITIAL COMMAND SETTING. This is also checked in main program loop below
+        // Check if controller parameters are available. If not, choose some defaults
+    if(!nh.getParam("/motor_wobble/min_ang", min_ang))
+    {
+        min_ang = 300;
+        ROS_INFO("Could not get min ang for motor_wobble, setting to %d", min_ang);
+    }
+
+    if(!nh.getParam("/motor_wobble/max_ang", max_ang))
+    {
+        max_ang = 900;  
+        ROS_INFO("Could not get max ang for motor_wobble, setting to %d", max_ang);
+    }
+
+    // This value goes "into" the ROS message object.
     short int command;
 
     if(!waitForSubs())
@@ -63,7 +81,18 @@ int main(int argc, char **argv) {
     }
     else
     {
-        command = g_current_wobbler_angle;
+        if(g_current_wobbler_angle > max_ang)
+        {
+            command = max_ang;
+        }
+        else if (g_current_wobbler_angle < min_ang)
+        {
+            command = min_ang;
+        }
+        else
+        {
+            command = g_current_wobbler_angle;
+        }
     }
     // Let user know what initial value of the angle we are going to command
     ROS_INFO("Wobbler motor angle (front and rear) starting command is at %d", command);
@@ -71,9 +100,7 @@ int main(int argc, char **argv) {
     // Controls whether the wobbler motors will increase or decrease in angle initially.
     bool increasing = false;
     int loop_counter = 0;
-    // The lowest and highest angles to go to
-    int min_ang;
-    int max_ang;
+
     // How much to icnrease the angle command by each iteration. This controls the wobblers angular speed (rad/s) as a proxy variable (count/iteration)
     int change_ang;
 

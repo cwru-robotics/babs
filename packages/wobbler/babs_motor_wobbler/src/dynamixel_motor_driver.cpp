@@ -141,8 +141,8 @@ int main(int argc, char **argv)
   std_msgs::Int16 front_motor_angle;
   std_msgs::Int16 rear_motor_angle;
 
-  int front_motor_ang;
-  int rear_motor_ang;
+  short int front_motor_ang = 0;
+  short int rear_motor_ang = 0;
 
   ROS_INFO("Attempting communication with following motors:");
   ROS_INFO("  @ motor_id %d at baudrate code %d",g_front_motor_id, motor_baud);
@@ -161,12 +161,12 @@ int main(int argc, char **argv)
     // Check if the received value is bad, holdover from older times...it may be important to make a note of for debugging
     if (front_motor_ang>4096) 
     {
-      ROS_WARN("Extremely likely read error from front Dynamixel: angular value of %d at cmd %d, ignoring?",front_motor_ang, g_front_goal_angle);
+      //ROS_WARN("Extremely likely read error from front Dynamixel: angular value of %d at cmd %d, ignoring?",front_motor_ang, g_front_goal_angle);
     }
 
     if (rear_motor_ang>4096) 
     {
-      ROS_WARN("Extremely likely read error from rear Dynamixel: angular value of %d at cmd %d, ignoring?",rear_motor_ang, g_rear_goal_angle);
+      //ROS_WARN("Extremely likely read error from rear Dynamixel: angular value of %d at cmd %d, ignoring?",rear_motor_ang, g_rear_goal_angle);
     }
 
     // Load read positions into ROS messages for publishing to topics
