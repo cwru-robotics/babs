@@ -19,11 +19,11 @@
 	</node>
 
 	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same motrion cmd to both front and rear (aka f/r) dynamixel motors  -->
-	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="log" > 
+	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="screen" > 
 		<!-- Params for node.   -->
 		<param name="min_ang" value="200" />
 		<param name="max_ang" value="600" />
-		<param name="wobble_speed" value="3" />
+		<param name="wobble_speed" value="2" />
 		<param name="front_motor_id" value="0" />
 		<param name="rear_motor_id" value="1" />
 

@@ -91,21 +91,21 @@ int main(int argc, char **argv) {
         if (loop_counter % 10 == 0)
         {
             // Check if controller parameters are available. If not, choose some defaults
-            if(!nh.getParam("min_ang", min_ang))
+            if(!nh.getParam("/motor_wobble/min_ang", min_ang))
             {
                 min_ang = 300;
                 ROS_INFO("Could not get min ang for motor_wobble, setting to %d", min_ang);
             }
 
-            if(!nh.getParam("max_ang", max_ang))
+            if(!nh.getParam("/motor_wobble/max_ang", max_ang))
             {
                 max_ang = 900;  
                 ROS_INFO("Could not get max ang for motor_wobble, setting to %d", max_ang);
             }
 
-            if(!nh.getParam("wobble_speed", change_ang))
+            if(!nh.getParam("/motor_wobble/wobble_speed", change_ang))
             {
-                change_ang = 1;
+                change_ang = 2;
                 ROS_INFO("Could not get change ang for motor_wobble, setting to %d", change_ang);
             }
         }

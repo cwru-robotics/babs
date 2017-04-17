@@ -78,7 +78,6 @@ void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& sc
     {
         scan_verified = true;
     }
-    ROS_INFO("VER SCAN");
 }
 
 void SubscriptionVerifier::verifyCloud(const PointCloud::ConstPtr& point_cloud)
@@ -96,7 +95,7 @@ void SubscriptionVerifier::verifyInt16(const std_msgs::Int16& integer)
 	int_received = true;
 	// Check that the integer is in the range we expected
 	//ROS_INFO("RECEIVED VERIFY INT 16 CB");
-    if(integer.data > 300 && integer.data < 1500)
+    if(integer.data > 1 && integer.data < 2300)
     {
     	//ROS_INFO("INT VERIFIED 16 IS  s TRUE");
         int_verified = true;
