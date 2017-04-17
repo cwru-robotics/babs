@@ -78,6 +78,7 @@ void SubscriptionVerifier::verifyScan(const sensor_msgs::LaserScan::ConstPtr& sc
     {
         scan_verified = true;
     }
+    ROS_INFO("VER SCAN");
 }
 
 void SubscriptionVerifier::verifyCloud(const PointCloud::ConstPtr& point_cloud)
@@ -146,7 +147,7 @@ void SubscriptionVerifier::test()
 bool SubscriptionVerifier::checkSubscription()
 {
     int count = 0;
-    ros::Rate count_rate(1000); // milliseconds
+    ros::Rate count_rate(3000); // milliseconds
     while(count < time_to_wait)
     {
         if(scan_verified)

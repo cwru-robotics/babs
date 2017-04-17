@@ -72,10 +72,10 @@ int main(int argc, char **argv) {
     bool increasing = false;
     int loop_counter = 0;
     // The lowest and highest angles to go to
-    double min_ang;
-    double max_ang;
+    int min_ang;
+    int max_ang;
     // How much to icnrease the angle command by each iteration. This controls the wobblers angular speed (rad/s) as a proxy variable (count/iteration)
-    double change_ang;
+    int change_ang;
 
     // ROS message object for the commanded angle
     std_msgs::Int16 int_angle; 
@@ -93,21 +93,20 @@ int main(int argc, char **argv) {
             // Check if controller parameters are available. If not, choose some defaults
             if(!nh.getParam("min_ang", min_ang))
             {
-                min_ang = 600;
+                min_ang = 300;
+                ROS_INFO("Could not get min ang for motor_wobble, setting to %d", min_ang);
             }
 
             if(!nh.getParam("max_ang", max_ang))
             {
-                max_ang = 1500;  
-            }
-            else
-            {
-                std::cout << "WEE WOO WEE WOO ERROR" << std::endl;
+                max_ang = 900;  
+                ROS_INFO("Could not get max ang for motor_wobble, setting to %d", max_ang);
             }
 
             if(!nh.getParam("wobble_speed", change_ang))
             {
                 change_ang = 1;
+                ROS_INFO("Could not get change ang for motor_wobble, setting to %d", change_ang);
             }
         }
 
