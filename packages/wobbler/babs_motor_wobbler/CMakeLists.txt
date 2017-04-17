@@ -7,7 +7,6 @@ catkin_simple()
 
 # Executables
 cs_add_executable(dynamixel_motor_driver src/dynamixel_motor_driver.cpp src/ReadWrite.c src/dynamixel.c src/dxl_hal.c)
-cs_add_executable(dynamixel_motor_driver2 src/dynamixel_motor_driver2.cpp src/ReadWrite.c src/dynamixel.c src/dxl_hal.c)
 
 cs_install()
 cs_export()

@@ -5,12 +5,12 @@
 		<!-- Parameters for the lidar frame transform   -->
 				
 		<param name="wobbler_joint_name" value="front_wobbler_joint" />
-		<param name="dist_to_joint_x" value="-0.175" />
+		<param name="dist_to_joint_x" value="-0.925" />
 		<param name="dist_to_joint_y" value="0.15" />
 		<param name="dist_to_joint_z" value="0.6" />
-		<param name="rot_to_joint_r" value="0.0" />
+		<param name="rot_to_joint_r" value="-0.09" />
 		<param name="rot_to_joint_p" value="0.0" />
-		<param name="rot_to_joint_y" value="3.14159265359" />
+		<param name="rot_to_joint_y" value="0.0" />
 
 		<remap from="/front_wobbler_joint_static_tf/angle" to="/front_wobbler/cmd"/>
 	</node>
@@ -21,11 +21,11 @@
 		<!-- Parameters for the lidar frame transform   -->
 
 		<param name="wobbler_joint_name" value="rear_wobbler_joint" />
-		<param name="dist_to_joint_x" value="-0.175" />
-		<param name="dist_to_joint_y" value="-0.282" /> <!-- Measured with a ruler --> 
+		<param name="dist_to_joint_x" value="-0.175" /> <!-- Measured with a ruler --> 
+		<param name="dist_to_joint_y" value="0.15" />
 		<param name="dist_to_joint_z" value="0.6" />
-		<param name="rot_to_joint_r" value="0.0" />
-		<param name="rot_to_joint_p" value="0.0" />
+		<param name="rot_to_joint_r" value="-0.09" />
+		<param name="rot_to_joint_p" value="0.05" />
 		<param name="rot_to_joint_y" value="3.14159265359" />
 
 		<remap from="/rear_wobbler_joint_static_tf/angle" to="/rear_wobbler/cmd"/>
