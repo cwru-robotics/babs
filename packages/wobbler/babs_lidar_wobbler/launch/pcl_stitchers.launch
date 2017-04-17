@@ -4,7 +4,7 @@
 
 		<remap from="/front_hokuyo_pcl_stitcher/scan_cloud" to="/front_wobbler/scan_cloud"/>
 		<remap from="/front_hokuyo_pcl_stitcher/point_cloud" to="/front_wobbler/point_cloud"/>
-		<remap from="/front_hokuyo_pcl_stitcher/angle" to="/front_wobbler/angle"/>
+		<remap from="/front_hokuyo_pcl_stitcher/angle" to="/front_wobbler/cmd"/>
 	</node>
 
 	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the rear wobbler, based on motor angle. -->
@@ -12,6 +12,6 @@
 
 		<remap from="/rear_hokuyo_pcl_stitcher/scan_cloud" to="/rear_wobbler/scan_cloud"/>
 		<remap from="/rear_hokuyo_pcl_stitcher/point_cloud" to="/rear_wobbler/point_cloud"/>
-		<remap from="/rear_hokuyo_pcl_stitcher/angle" to="/rear_wobbler/angle"/>
+		<remap from="/rear_hokuyo_pcl_stitcher/angle" to="/rear_wobbler/cmd"/>
 	</node>
 </launch>

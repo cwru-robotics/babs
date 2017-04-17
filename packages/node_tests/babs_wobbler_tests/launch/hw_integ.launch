@@ -16,13 +16,13 @@
 		<param name="front_hokuyo_scan_name" value="/front_wobbler/scan" />
 		<param name="front_transformed_scan_cloud_name" value="/front_wobbler/scan_cloud" />
 		<param name="front_stitched_cloud_name" value="/front_wobbler/point_cloud" />
-		<param name="front_motor_angle_name" value="/front_wobbler/angle" />
+		<param name="front_motor_angle_name" value="/front_wobbler/cmd" />
 		<param name="front_motor_command_name" value="/front_wobbler/cmd" />
 
 		<param name="rear_hokuyo_scan_name" value="/rear_wobbler/scan" />
 		<param name="rear_transformed_scan_cloud_name" value="/rear_wobbler/scan_cloud" />
 		<param name="rear_stitched_cloud_name" value="/rear_wobbler/point_cloud" />
-		<param name="rear_motor_angle_name" value="/rear_wobbler/angle" />
+		<param name="rear_motor_angle_name" value="/rear_wobbler/cmd" />
 		<param name="rear_motor_command_name" value="/rear_wobbler/cmd" />
 
 		<param name="start_testing" value="1.0" />
