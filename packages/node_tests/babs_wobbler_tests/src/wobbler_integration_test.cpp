@@ -56,7 +56,7 @@ private:
 SubscriptionVerifier::SubscriptionVerifier(std::string name, std::string callback_name)
 {
 	param_name = name;
-    time_to_wait = 2000; // milliseconds
+    time_to_wait = 5000; // milliseconds
     scan_verified = false;
     cloud_verified = false;
     int_verified = false;
@@ -147,7 +147,7 @@ void SubscriptionVerifier::test()
 bool SubscriptionVerifier::checkSubscription()
 {
     int count = 0;
-    ros::Rate count_rate(3000); // milliseconds
+    ros::Rate count_rate(1000); // milliseconds
     while(count < time_to_wait)
     {
         if(scan_verified)
