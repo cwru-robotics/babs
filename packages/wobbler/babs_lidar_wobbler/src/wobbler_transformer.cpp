@@ -1,6 +1,7 @@
-// LIDAR Transformer node for babs_lidar_wobbler.
+// LIDAR Scan to Point Cloud Transformer node for babs_lidar_wobbler package for BABS Wobbler
 // Pulled from a completed homework assignment for Modern Robotics Programming by Trent Ziemer, heavily based on a minimal node written by Dr. Wyatt Newman.
-// Original node name was lidar_transformer. This is ...2 because it's just a variant on that node from a different package.
+// Original node name was lidar_transformer.
+// Now called wobbler_transformer
 
 #include <math.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 using namespace std;
 
 // These are global pointers
-ros::NodeHandle * nh_ptr;
+ros::NodeHandle * node_ptr;
 pcl::PointCloud<pcl::PointXYZ> cloud;
 ros::Publisher * pubCloud_ptr;
 tf::TransformListener *g_listener_ptr; //a transform listener
@@ -36,6 +37,9 @@ double wobbler_angle;
 double scanning_upwards;
 double last_wobbler_angle;
 
+// Parameter that should end up being "front_wobbler_laser or "rear_wobbler_laser" that names the transform frame of the f/r wobbler laser
+std::string wobbler_laser_name;
+
 // This callback function is called whenever we receive a laser scan message
 //  It will publish the scan as a point cloud. This cloud is a 2D slice of the final point cloud that results from the wobbler sweeping and getting stitched together.
 void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
@@ -43,13 +47,13 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     // get the transform from LIDAR frame to world frame
     tf::StampedTransform stfLidar2World;
     //specialized for lidar_wobbler; more generally, use scan_in->header.frame_id
-    g_listener_ptr->lookupTransform("lidar_link", "laser", ros::Time(0), stfLidar2World);
+    g_listener_ptr->lookupTransform("lidar_link", wobbler_laser_name, ros::Time(0), stfLidar2World);
     //extract transform from transformStamped:
     tf::Transform tf = xformUtils.get_tf_from_stamped_tf(stfLidar2World);    
     //stfLidar2World is only the pose of the LIDAR at the LAST ping...
     //better would be to consider separate transforms for each ping
     //using the above transform for all points is adequate approx if LIDAR is wobbling slowly enough
-    Eigen::Affine3d affine_tf,affine_tf_inv; //can use an Eigen type "affine" object for transformations
+    Eigen::Affine3d affine_tf, affine_tf_inv; //can use an Eigen type "affine" object for transformations
     //convert transform to Eigen::Affine3d
     affine_tf = xformUtils.transformTFToAffine3d(tf); //can use this to transform points to world frame
     affine_tf_inv = affine_tf.inverse();
@@ -59,8 +63,8 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     g_pt_vecs_wrt_world_frame.clear();
 
     ROS_INFO("received %d ranges: ", npts);
-    double start_ang = scan_in->angle_min; //get start and end angles from scan message
-    double end_ang = scan_in->angle_max;   //should be -90 deg to +90 deg
+    double start_ang = scan_in->angle_min; // get start and end angles from scan message
+    double end_ang = scan_in->angle_max;   // should be -90 deg to +90 deg
     double d_ang = (end_ang - start_ang) / (npts - 1); //samples are at this angular increment
     ROS_INFO("d_ang = %f", d_ang);
     Eigen::Vector3d vec; //var to hold one point at a time
@@ -114,18 +118,19 @@ void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan_in) {
     pub_ptr->publish(msg);
 }
 
-// Program starting point.
 int main(int argc, char** argv) {
     ros::init(argc, argv, "lidar_wobbler_transformer");
-    ros::NodeHandle nh;
-    nh_ptr = &nh;
+    ros::NodeHandle nh("~");
+    node_ptr = &nh;
 
-    // TZ below
-    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("wobbler_scan_cloud", 1);
+    if(!node_ptr->getParam("wobbler_laser_name", wobbler_laser_name))
+    {
+        ROS_WARN("FAILED TO GET WOBBLER LASER NAME");
+    }
+
+    ros::Publisher pub = nh.advertise<sensor_msgs::PointCloud2> ("scan_cloud", 1);
 
     pub_ptr = &pub;
-
-    // WSN below
 
     g_listener_ptr = new tf::TransformListener;
     tf::StampedTransform stfLidar2World;
@@ -135,19 +140,20 @@ int main(int argc, char** argv) {
     while (tferr) {
         tferr = false;
         try {
-            g_listener_ptr->lookupTransform("lidar_link", "laser", ros::Time(0), stfLidar2World);
+            ROS_INFO("wobbler_transformer.......!!!!");
+            g_listener_ptr->lookupTransform("lidar_link", wobbler_laser_name, ros::Time(0), stfLidar2World);
         } catch (tf::TransformException &exception) {
 
             ROS_WARN("%s; retrying...", exception.what());
             tferr = true;
             ros::Duration(0.5).sleep(); // sleep for half a second
             ros::spinOnce();
-
         }
     }
-    ROS_INFO("transform received; ready to process lidar scans");
 
-    ros::Subscriber lidar_subscriber = nh.subscribe("/scan", 1, scanCallback);
+    ROS_INFO("Transform received; ready to process lidar scans");
+
+    ros::Subscriber lidar_subscriber = nh.subscribe("scan", 1, scanCallback);
 
     ros::spin();
 

@@ -1,37 +1,9 @@
 <launch> 
-	<!-- Start Hokuyo LIDAR data collection   -->
-	<node pkg= "hokuyo_node"  type="hokuyo_node" name= "hokuyo_node" args="_port:=/dev/ttyACM1" /> 
 
-	<!-- Open communication driver between ROS and the dynamixel motor for the wobbler.   -->
-	<node pkg= "baxter_gripper"  type= "dynamixel_motor_node" name= "dynamixel_motor_node" args="-baud 34 -tty 3" /> 
-
-	<!-- Static transform between lidar_link frame and joint frame   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_joint_static_tf" name= "wobbler_joint_static_tf" /> 
-	<!-- Params for node.   -->
-	<param name="dist_to_joint_x" value="-0.175" />
-	<param name="dist_to_joint_y" value="0.15" />
-	<param name="dist_to_joint_z" value="0.6" />
-	<param name="rot_to_joint_r" value="0.0" />
-	<param name="rot_to_joint_p" value="0.0" />
-	<param name="rot_to_joint_y" value="3.14159265359" />
-
-	<!-- Transform dependent on joint angle between joint and the wobbling LIDAR lasers source.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "wobbler_laser_tf" name= "wobbler_laser_tf" /> 
-	<!-- Dummy params for node.   -->
-	<param name="factor" value="1" />
-	<param name="factor2" value="0.5" />
-
-	<!-- Publishes a wobbling motion for the dynamixel motor driver node.   -->
-	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" /> 
-	<!-- Params for node.   -->
-	<param name="min_angle" value="300" />
-	<param name="max_angle" value="800" />
-	<param name="wobble_speed" value="3" />
-
-	<!-- Publishes point clouds transformed to the lidar_link frame from the hokuyo LaserScans, using Dynamixel motor information. -->
-	<node pkg= "babs_lidar_wobbler" type= "lidar_transformer2" name= "lidar_transformer2" />
-
-	<!-- Stitches together point clouds of a single scan into a point cloud of a single one-way sweep of the wobbler, based on motor angle. -->
-	<node pkg= "babs_lidar_wobbler" type= "hokuyo_pcl_stitcher" name= "hokuyo_pcl_stitcher" />
+	<include file="$(find babs_lidar_wobbler)/launch/hokuyo_drivers.launch" />
+	<include file="$(find babs_lidar_wobbler)/launch/cloud_transformers.launch" />
+	<include file="$(find babs_lidar_wobbler)/launch/pcl_stitchers.launch" />
+	<include file="$(find babs_lidar_wobbler)/launch/wobbler_transforms.launch" />
+	<include file="$(find babs_lidar_wobbler)/launch/motors.launch" />\
 
 </launch>

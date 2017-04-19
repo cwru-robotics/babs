@@ -1,0 +1,31 @@
+<launch> 
+
+	<!-- Start test node-->
+
+	<node pkg= "babs_wobbler_tests" type="lidar_calibration_test" name= "lidar_calibration_test" output="screen"> 
+
+	<!-- Test params to test the test --> 
+	
+	<!-- REMOVE these params when actually testing the lidar_calibration node 
+	<param name="x_dist" value="1.63" />
+	<param name="y_dist" value="5.63" />
+	<param name="z_dist" value="-0.63" />
+	<param name="roll"   value="0.05" />
+	<param name="pitch"  value="1.1" />
+	<param name="yaw"    value="-0.15132" />
+    	-->
+	</node>
+
+	<!-- Start lidar_calibration node under test -->
+
+	<node pkg= "lidar_calibration"  type="lidar_calibration" name= "lidar_calibration" output="screen"> 
+	</node>
+
+	<!-- Rosbag input for calibration -->
+
+	<node pkg="rosbag" type="play" name="player" args="--clock /home/mordoc/wobbler_scans/quickarmscan.bag"/>
+
+	<remap from="/sensor_msgs/LaserScan" to="/sick_scan" />
+	<remap from="/wobbler_3d_cloud" to="/wobbler_sweep" />
+
+</launch>

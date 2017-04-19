@@ -1,0 +1,32 @@
+# Trent Ziemer's custom udev rules for BABS robot USB based sensors
+# Written January 28 2017
+# Updated April 15 2017
+
+# Main SICK LIDAR (normal USB cable that used to be ttyUSB1) 
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="FTDGL7UE", SYMLINK+="sensor-sick_lidar"
+
+# Inertial Measurement Unit (integrated PCB with USB cable that used to be ttyUSB2)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A600APZO", SYMLINK+="sensor-imu"
+
+# Dynamixel Wobbler Motors (both front and back wobbler motors controlled through same) (large and chunk USB device that used to be ttyUSB3)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZS0", SYMLINK+="sensor-wobbler_motors", SYMLINK+="ttyUSB999"
+# NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict with standard USB devices.
+
+# GPS Receiver (usb cable to serial converter that used to be ttyUSB0)
+SUBSYSTEM=="tty", ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", SYMLINK+="sensor-gps"
+# NOTE: GPS receiver unit USB device has no associated serial number as most others do, but this should still be fine
+
+# Motor Controller
+SUBSYSTEM=="tty", ATTRS{idVendor}=="20d2", ATTRS{idProduct}=="5740", SYMLINK+="sensor-roboteq_motors"
+# NOTE: test
+
+
+
+# SUSPENDED FOLLOWING TWO: THEY CANT WORK RIGHT!
+# Hokuyo Wobbling LIDAR in the Rear (2-prong black and red USB cables that was just recently added)
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-rear_wobbler_lidar"
+# NOTE: Our wobbler LIDAR USB devices have no associated serial number as most others do, but this should still be fine
+
+# Hokuyo Wobbling LIDAR in the Front (2-prong black and red USB cables that used to be ttyACM1)
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", SYMLINK+="sensor-front_wobbler_lidar"
+# NOTE: Our wobbler LIDAR USB devices have no associated serial number as most others do, but this should still be fine

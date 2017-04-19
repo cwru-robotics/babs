@@ -38,19 +38,27 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
         wobbler_angle = message_holder.data;
 
         // Get the most updated value of the wobbler's min/max wobbling angle. The angle can change in the middle of operation.
-        if(!nh_ptr->getParam("min_angle", min_ang))
+
+        if(!nh_ptr->getParam("/motor_wobble/min_ang", min_ang))
         {
-            ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
-            min_ang = 500;
+            ROS_WARN("FAILED TO GET WOBBLER MIN ANG IN CALLBACK");
+        }
+        else
+        {
+            ROS_INFO("SUCCEEDED TO GET WOBBLER MIN ANG IN CALLBACK");
         }
 
-        if(!nh_ptr->getParam("max_angle", max_ang))
+        if(!nh_ptr->getParam("/motor_wobble/max_ang", max_ang))
         {
-            ROS_WARN("Wobbler point cloud could not find wobbler maximum angle (max_ang) on param server. Using arbitrary value.");
-            max_ang = 1000;
+            ROS_WARN("FAILED TO GET WOBBLER MAX ANG IN CALLBACK");
         }
-
-
+        else
+        {
+            ROS_INFO("SUCCEEDED TO GET WOBBLER MAX ANG IN CALLBACK");
+        }
+        // Require that the minimum number of scans done be half the total expected number of scans to do (i.e, the wobbler must move halfway through single sweep before sending new point cloud)
+        min_scan_callbacks = (max_ang - min_ang) / 2; 
+        
         scan_callback_count++;
         if(scan_callback_count > min_scan_callbacks)
         {
@@ -79,7 +87,7 @@ void hokuyoMotorCallback(const std_msgs::Int16& message_holder)
             cloud.clear(); // Reset the point cloud, prepping for another sweep.
             been_awhile = false;
         }
-        // WE get an initial up/down jitter that happens. Can be fixed here, but I dont wanna do that now.
+        // We get an initial up/down jitter that just happens. Can be fixed here, but I dont wanna do that now.
         last_wobbler_angle = wobbler_angle;
         // If it was neither of these, then the sweep isn't completed yet and we shouldnt clear/publish
     }
@@ -93,7 +101,6 @@ void cloudCallback(const PointCloud::ConstPtr& cloud_holder)
     {
         // CORRECTS FOR SOME WEIRD REFLECTION ISSUE WE GET IN THE Y-AXIS. I KNOW ITS HACKY - TZ - 11/21/2016
         pcl::PointXYZ single_point(cloud_holder->points[i].x, -cloud_holder->points[i].y, cloud_holder->points[i].z);
-
         cloud.points.push_back(single_point);
     }
 }
@@ -103,31 +110,28 @@ int main(int argc, char **argv)
     ros::init(argc,argv,"hokuyo_pcl_stitcher");
     // Init last wobbler angle to special value
     last_wobbler_angle = -9999999;
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
     nh_ptr = &nh;
+
+    if(!nh_ptr->getParam("/motor_wobble/min_ang", min_ang))
+    {
+        ROS_WARN("FAILED TO GET WOBBLER MIN ANG");
+    }
+
+    if(!nh_ptr->getParam("/motor_wobble/max_ang", max_ang))
+    {
+        ROS_WARN("FAILED TO GET WOBBLER MAX ANG");
+    }
 
     // Internal scanning/sweeping parameters
     bool scanning_upwards = true;
     bool been_awhile = false;
-    min_scan_callbacks = (max_ang - min_ang) / 2; // Require that the minimum number of scans be half the total expected number of scans. ie the wobbler must move halfway through single sweep before sending new point cloud.
     scan_callback_count = 0;
 
-    if(!nh_ptr->getParam("min_ang", min_ang))
-    {
-        ROS_WARN("Wobbler point cloud could not find wobbler minimum angle (min_ang) on param server. Using arbitrary value.");
-        min_ang = 900;
-    }
+    ros::Subscriber my_subscriber_object = nh.subscribe("angle", 1, hokuyoMotorCallback);
+    ros::Subscriber my_subscriber_object2 = nh.subscribe("scan_cloud", 1, cloudCallback);
 
-    if(!nh_ptr->getParam("max_ang", max_ang))
-    {
-        ROS_WARN("Wobbler point cloud could not find wobbler maximum angle (max_ang) on param server. Using arbitrary value.");
-        max_ang = 1100;
-    }
-
-    ros::Subscriber my_subscriber_object = nh.subscribe("/dynamixel_motor1_ang", 1, hokuyoMotorCallback);
-    ros::Subscriber my_subscriber_object2 = nh.subscribe("/wobbler_scan_cloud", 1, cloudCallback);
-
-    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/wobbler_3d_cloud", 1);
+    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("point_cloud", 1);
     pubCloud_ptr = &pubCloud;
 
     ros::spin();

@@ -1,0 +1,52 @@
+<launch> 
+
+	<!-- Tests the wobbler stack when used within a simulation (no hardware available). Uses rosbags to simulate frames, Hokuyo, and Dynamixel data -->
+
+	<!-- Start all the nodes that are to be under test -->
+	<include file="$(find babs_lidar_wobbler)/launch/start_wobbler.launch" /> 
+
+	<!-- Start all the nodes that support simulation of the system -->
+	<include file="$(find babs_nav)/launch/init_sim.launch"/> 
+
+	<!-- Start node that will test the wobbler nodes -->
+	<node pkg="babs_wobbler_tests" type="wobbler_integration_test" name="wobbler_integration_test" args="" output="screen" > 
+
+		<!-- Test params to test the test --> 
+
+		<param name="front_hokuyo_scan_name" value="/front_wobbler/scan" />
+		<param name="front_transformed_scan_cloud_name" value="/front_wobbler/scan_cloud" />
+		<param name="front_stitched_cloud_name" value="/front_wobbler/point_cloud" />
+		<param name="front_motor_angle_name" value="/front_wobbler/angle" />
+		<param name="front_motor_command_name" value="/front_wobbler/cmd" />
+
+		<param name="rear_hokuyo_scan_name" value="/rear_wobbler/scan" />
+		<param name="rear_transformed_scan_cloud_name" value="/rear_wobbler/scan_cloud" />
+		<param name="rear_stitched_cloud_name" value="/rear_wobbler/point_cloud" />
+		<param name="rear_motor_angle_name" value="/rear_wobbler/angle" />
+		<param name="rear_motor_command_name" value="/rear_wobbler/cmd" />
+
+		<param name="start_testing" value="1.0" />
+
+	</node>
+
+	<!-- USE THIS IF SIMULATING THE FRONT WOBBLER (IE NOT USING PHYSICAL HARDWARE) -->
+	<!-- Start point cloud rosbag play to take place of input data stream for front wobbler -->
+	<node pkg="rosbag" type="play" name="rosbag_front_wobbler_data" args="/home/mordoc/rosbags/wobbler_scans/wobbler_data.bag" respawn="true"  output="log" >\
+		<remap from="/scan" to="/front_wobbler/scan"/>
+		<remap from="/dynamixel_motor1_ang" to="/front_wobbler/angle"/>
+	</node>
+
+	<!-- USE THIS IF SIMULATING THE REAR WOBBLER (IE NOT USING PHYSICAL HARDWARE) -->
+	<!-- Start point cloud rosbag play to take place of input data stream for rear wobbler. Using same data for front and rear wobbler because idgaf -->
+	<node pkg="rosbag" type="play" name="rosbag_rear_wobbler_data" args="/home/mordoc/rosbags/wobbler_scans/wobbler_data.bag" respawn="true" output="log" >\
+		<remap from="/scan" to="/rear_wobbler/scan"/>
+		<remap from="/dynamixel_motor1_ang" to="/rear_wobbler/angle"/>
+	</node>
+
+	<!-- NOTE: These topics are blank if not added as above, because Hokuyo nodes will fail and not post topics if there is no hardware to attach to. -->
+
+	<!-- TEMPLATE
+	<node pkg=" "  type=" " name=" " output=" " > 
+	</node> -->
+
+</launch>

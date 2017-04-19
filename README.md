@@ -1,4 +1,5 @@
-# tank-chair
+# BABS, a mobile Autonomous Robotic Sentry
+# (Stands for "Bayesian Autonomous Broadcasting Sentry")
 A repository for senior project work for the smart wheelchair and Air Force sentry.
 
 # Explanation of directories
@@ -7,6 +8,7 @@ Location for technical documents detailing
 	hardware components
 	algorithms
 	design choices
+	software setup
 	etc.
 
 Data sheets from electronics go here. Research material goes here.
@@ -22,6 +24,5 @@ A tree hierarchy of directories will be used to organize the various launchers.
 Directory for ROS packages.
 
 Any ROS packages to be used by this project should be stored here.
-Use unique naming to prevent conflicts.
 Any issues with package compilation should be brought to the maintainer.
 
