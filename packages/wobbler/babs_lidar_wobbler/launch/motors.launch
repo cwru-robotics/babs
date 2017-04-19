@@ -1,0 +1,30 @@
+<launch> 
+
+	<!-- Open communication driver between ROS and the dynamixel motors for the wobblers (one node for both/all dynamixel motors). -->
+	<node pkg= "babs_motor_wobbler" type= "dynamixel_motor_driver" name= "dynamixel_motor_driver" args="-baud 34 -tty 999 -m 0" output="log" > 
+		<!--  NOTE: The wobblers motor gets two synonymous symlinks for its device because the dynamixel motor requires a device name in the form of "/dev/ttyUSBx", where x is an integer for the driver code. We chose this to be x = 999 to not conflict. The other one is the normal sensor-front_wobbler_motor format. -->
+
+		<!-- Parameters for the dynamixel motor driver, giving the IDs of all the motors and how to connect to them-->
+
+		<param name="front_motor_id" value="0" />
+		<param name="rear_motor_id" value="1" />
+
+		<!-- Dynamixel motor connection parameters -->
+		<param name="motor_tty" value="999" />
+		<param name="motor_baud" value="34" />
+
+	</node>
+
+	<!-- Publishes a wobbling motion for the dynamixel motor driver node. Currently applies the same motrion cmd to both front and rear (aka f/r) dynamixel motors  -->
+	<node pkg= "babs_lidar_wobbler"  type= "motor_wobble" name= "motor_wobble" output="log" > 
+
+		<!-- Params for each motor (min/max angle for each sweep, and speed (should be 1 for slow, 2 for medium, 3 for fast))  -->
+		<param name="min_ang" value="200" />
+		<param name="max_ang" value="1100" />
+		<param name="wobble_speed" value="2" />
+		<param name="front_motor_id" value="0" />
+		<param name="rear_motor_id" value="1" />
+
+	</node>
+
+</launch>

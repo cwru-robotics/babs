@@ -56,7 +56,7 @@ private:
 SubscriptionVerifier::SubscriptionVerifier(std::string name, std::string callback_name)
 {
 	param_name = name;
-    time_to_wait = 5000; // milliseconds
+    time_to_wait = 7000; // milliseconds
     scan_verified = false;
     cloud_verified = false;
     int_verified = false;
